@@ -19,16 +19,19 @@ class DataModel():
     DATA_SET_FILE_Y = os.path.join(filepath, 'data/Y.npy')
 
     def __init__(self):
-        pass
+        self.data_dict = None
 
+    def get_data_dict(self):
+        if self.data_dict = data_dict is not None:
+            return self.data_dict = data_dict
+        else:
+            self.data_dict = self.create_data_dict()
+            return self.data_dict = data_dict
 
     def create_data_dict(self):
         """
             Returns dictionary for a given usage
         """
-        if self.data_dict = data_dict is not None:
-            return self.data_dict = data_dict
-
         data_dict = dict()
         for usage in ['train', 'test']:
             data_dict[usage] = dict()
@@ -76,7 +79,6 @@ class DataModel():
                                 for row in reader:
                                     data_dict[usage][dialect][speaker]['wrd'].append(row)
                                 data_dict[usage][dialect][speaker]['wrd'] = np.array(data_dict[usage][dialect][speaker]['wrd'])
-        self.data_dict = data_dict
         return data_dict
 
     #def save_data_dict(self):
@@ -100,7 +102,7 @@ def main():
     print(data_dict['test']['dr1']['mrjo0'].keys())
     print(data_dict['test']['dr1']['mrjo0']['data'])
 
-    save_file(X=data_dict, filename=)
+    #save_file(X=data_dict, filename=)
 
 if __name__ == '__main__':
     main()
