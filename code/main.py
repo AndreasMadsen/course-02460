@@ -124,8 +124,6 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
         start_time = time.time()
         for batch in iterate_minibatches(X_train, Y_train, batch_size, shuffle=True):
             inputs, targets = batch
-            print(inputs.shape)
-            print(targets.shape)
             train_err += train_fn(inputs, targets)
             train_batches += 1
 
@@ -134,8 +132,6 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
         val_batches = 0
         for batch in iterate_minibatches(X_val, Y_val, batch_size, shuffle=False):
             inputs, targets = batch
-            print(inputs.shape)
-            print(targets.shape)
             err = val_fn(inputs, targets)
             val_err += err
             val_batches += 1
