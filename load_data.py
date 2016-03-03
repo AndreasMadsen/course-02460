@@ -19,13 +19,14 @@ class DataModel():
     DATA_SET_FILE_Y = os.path.join(filepath, 'data/Y.npy')
 
     def __init__(self):
-        self.data_dict = None
+        self._data_dict = None
 
-    def get_data_dict(self):
-        if self.data_dict is None:
-            self.data_dict = self.create_data_dict()
-            
-        return self.data_dict
+    @property
+    def data_dict(self):
+        if self._data_dict is None:
+            self._data_dict = self.create_data_dict()
+
+        return self._data_dict
 
     def create_data_dict(self):
         """
@@ -95,7 +96,8 @@ def load_file(filename):
 
 def main():
     data_model = DataModel()
-    data_dict = data_model.create_data_dict()
+    data_dict = data_model.data_dict
+    print(data_dict)
     print(data_dict.keys())
     print(data_dict['test'].keys())
     print(data_dict['test']['dr1'].keys())
