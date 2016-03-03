@@ -1,7 +1,7 @@
 
 Requirements
 -----------
-- Python 2.7
+- Python 3.4
 - pip (`brew install pip`)
 - virtualenv (`pip install virtualenv`)
 
