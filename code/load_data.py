@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from scipy.io import wavfile
 
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.cross_validation import train_test_split
 
 class DataModel():
     # Static variables
@@ -26,6 +26,8 @@ class DataModel():
     _data_dict = None
     _class_type = None
     _classes = None
+    _X = None
+    _Y = None
 
     def __init__(self, reset=False, class_type='gender'):
         self._class_type=class_type
@@ -171,56 +173,79 @@ class DataModel():
                         yield (usage, dialect, speaker, text_type, \
                                self.data_dict[usage][dialect][speaker][text_type])
 
-    def load_data(self, time_windows=3):
+    @property
+    def data(self):
+        if self._X is not None and self._Y is not None:
+            return self._X['train'], self._Y['train'], \
+                   self._X['val'],   self._Y['val'], \
+                   self._X['test'],  self._Y['test']
+        try:
+            print("Loading data files..")
+            self.load_data_files()
+        except:
+            print("Pickled file not found..")
+            print("Creating data files from dictionary..")
+            self._X, self._Y = self.create_data()
+            print("Pickling files..")
+            self.save_data_files()
+        return self._X['train'], self._Y['train'], \
+               self._X['val'],   self._Y['val'], \
+               self._X['test'],  self._Y['test']
+
+
+    def create_data(self, time_windows=384):
         """
             `time_windows` = length of window
         """
-        count = 0
-        X, Y = [], []
+        X, Y = {}, {}
         for usage, dialect, speaker, text_type, data in self.texts_generator():
-            print((usage, dialect, speaker, text_type))
-            print(data['spectogram'].shape)
-            print(data['data_raw'].shape)
-            print(data['sample_rate'])
 
             # Very naive way of taking only 3 second windows of spectogram
-            if data['spectogram'].shape[1] < 384:
+            if data['spectogram'].shape[1] < time_windows:
                 continue
 
-            x = data['spectogram'][:,0:384]
+            x = data['spectogram'][:,0:time_windows]
+            x = x.reshape((1, 1, x.shape[0], x.shape[1]))
             y = self.class2vec(class_value=speaker[0])
 
-            print(x.shape)
-            print(y)
-
-            if len(X) == 0:
-                X = x
+            if usage not in X.keys():
+                X[usage] = x
             else:
-                X = np.vstack((X, x))
-            Y.append(y)
+                X[usage] = np.vstack((X[usage], x))
 
-            count += 1
-            if count > 20:
-                break
+            if usage not in Y.keys():
+                Y[usage] = []
+            Y[usage].append(y)
 
-        X = np.array(X)
-        Y = np.array(Y)
+        for usage in Y.keys():
+            Y[usage] = np.array(Y[usage]).astype('int32')
 
-        print(X.shape)
-        print(Y.shape)
+        X['train'], X['val'], Y['train'], Y['val'] = train_test_split(X['train'], Y['train'], test_size=0.10, random_state=42)
+        return X, Y
 
-        return X_train, Y_train, X_val, Y_val, X_test, Y_test
+    def save_data_files(self):
+        with open(self.DATA_SET_FILE_X, 'wb') as f:
+            pickle.dump(self._X, f)
+        with open(self.DATA_SET_FILE_Y, 'wb') as f:
+            pickle.dump(self._Y, f)
 
+    def load_data_files(self):
+        with open(self.DATA_SET_FILE_X, 'rb') as f:
+            self._X = pickle.load(f)
+        with open(self.DATA_SET_FILE_Y, 'rb') as f:
+            self._Y = pickle.load(f)
 
 def main():
     data_model = DataModel(reset=True)
     data_dict = data_model.data_dict
+    del data_dict
+    data = data_model.data
+    del data
     #print(data_dict)
     #print(data_dict.keys())
     #print(data_dict['test'].keys())
     #print(data_dict['test']['dr1'].keys())
     #print(data_dict['test']['dr1']['mrjo0'].keys())
-    #print(data_dict['test']['dr1']['mrjo0']['data'])
 
 
 
