@@ -15,6 +15,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 class DataModel():
     # Static variables
     DATA_SET_PATH   = os.path.join(filepath, 'data/timit/')
+    DATA_SET_FILE_DATA_DICT = os.path.join(filepath, 'data/data_dict.npy')
     DATA_SET_FILE_X = os.path.join(filepath, 'data/X.npy')
     DATA_SET_FILE_Y = os.path.join(filepath, 'data/Y.npy')
 
@@ -23,9 +24,14 @@ class DataModel():
 
     @property
     def data_dict(self):
-        if self._data_dict is None:
-            self._data_dict = self.create_data_dict()
-
+        try:
+            self.load_data_dict()
+        except:
+            if self._data_dict is None:
+                print("Creating data dictionary from files..")
+                self._data_dict = self.create_data_dict()
+                print("Pickling file..")
+                self.save_data_dict()
         return self._data_dict
 
     def create_data_dict(self):
@@ -82,21 +88,21 @@ class DataModel():
         return data_dict
 
     def save_data_dict(self):
-        data_dict = self.get_data_dict()
+        with open(self.DATA_SET_FILE_DATA_DICT, 'wb') as f:
+            pickle.dump(self.data_dict, f)
 
+    def load_data_dict(self):
+        with open(self.DATA_SET_FILE_DATA_DICT, 'rb') as f:
+            self._data_dict = pickle.load(f)
 
-# Persistency
-def save_file(X, filename):
-    with open(filename, 'wb') as f:
-        pickle.dump(X, f)
-def load_file(filename):
-    with open(filename, 'rb') as f:
-        data = pickle.load(f)
-    return data
+    def load_data():
+        pass
+
 
 def main():
     data_model = DataModel()
     data_dict = data_model.data_dict
+    data_model.save_data_dict()
     print(data_dict)
     print(data_dict.keys())
     print(data_dict['test'].keys())
