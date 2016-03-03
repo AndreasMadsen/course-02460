@@ -22,11 +22,10 @@ class DataModel():
         self.data_dict = None
 
     def get_data_dict(self):
-        if self.data_dict = data_dict is not None:
-            return self.data_dict = data_dict
-        else:
+        if self.data_dict is None:
             self.data_dict = self.create_data_dict()
-            return self.data_dict = data_dict
+            
+        return self.data_dict
 
     def create_data_dict(self):
         """
@@ -81,8 +80,9 @@ class DataModel():
                                 data_dict[usage][dialect][speaker]['wrd'] = np.array(data_dict[usage][dialect][speaker]['wrd'])
         return data_dict
 
-    #def save_data_dict(self):
-    #    data_dict = self.get_data_dict(usage='test')
+    def save_data_dict(self):
+        data_dict = self.get_data_dict()
+
 
 # Persistency
 def save_file(X, filename):
