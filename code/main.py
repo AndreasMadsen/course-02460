@@ -106,16 +106,13 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
     test_loss = loss_function(test_prediction, target_var)
     test_loss = test_loss.mean()
-    # As a bonus, also create an expression for the classification accuracy:
-    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
-                      dtype=theano.config.floatX)
 
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
     train_fn = theano.function([input_var, target_var], loss, updates=updates)
 
     # Compile a second function computing the validation loss and accuracy:
-    val_fn = theano.function([input_var, target_var], [test_loss, test_acc])
+    val_fn = theano.function([input_var, target_var], test_loss)
 
     # Finally, launch the training loop.
     print("Starting training...")
@@ -127,18 +124,20 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
         start_time = time.time()
         for batch in iterate_minibatches(X_train, Y_train, batch_size, shuffle=True):
             inputs, targets = batch
+            print(inputs.shape)
+            print(targets.shape)
             train_err += train_fn(inputs, targets)
             train_batches += 1
 
         # And a full pass over the validation data:
         val_err = 0
-        val_acc = 0
         val_batches = 0
         for batch in iterate_minibatches(X_val, Y_val, batch_size, shuffle=False):
             inputs, targets = batch
-            err, acc = val_fn(inputs, targets)
+            print(inputs.shape)
+            print(targets.shape)
+            err = val_fn(inputs, targets)
             val_err += err
-            val_acc += acc
             val_batches += 1
 
         # Then we print the results for this epoch:
@@ -146,8 +145,6 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
             epoch + 1, num_epochs, time.time() - start_time))
         print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
         print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
-        print("  validation accuracy:\t\t{:.2f} %".format(
-            val_acc / val_batches * 100))
 
     # After training, we compute and print the test error:
     test_err = 0
@@ -161,8 +158,6 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
         test_batches += 1
     print("Final results:")
     print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
-    print("  test accuracy:\t\t{:.2f} %".format(
-        test_acc / test_batches * 100))
 
 
 if __name__ == '__main__':
