@@ -1,0 +1,24 @@
+
+The dieleman paper investigats the difference between, an end-to-end CNN model
+that takes the raw audio, with a two-stage CNN model that takes a spectogram
+as input.
+
+The comparison was done by adding extra convulutional later to the two-stage
+CNN model. This layer performed \textit{stride convulution} with strides
+similar to that used in the spectogram calculations.
+
+The two-stage CNN performed best, but the end-to-end CNN did learn spectogram
+like features.
+
+The spectogram where transformed using \textit{dynamic range compression}
+$f(x) = \log(1 + C * x)$, where $C = 10000$. They also use something called
+\textit{mel-spectogram}. \todo{what is mel-spectogram?}. The end-to-end CNN
+should not be able to model this, since it uses ReLU. They did try to use a
+compression function instead of ReLU, but the results where not improved.
+
+The spectograms are translation and phase invariant which is a disired feature
+in audio modelling. The end-to-end CNN discovers features that has theses
+properties as well.
+
+The paper sugests using an CNN initialization that initalizes the first stride
+layer to mimic a spectogram calculation.
