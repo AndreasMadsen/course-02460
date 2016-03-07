@@ -6,10 +6,6 @@ import os
 import numpy as np
 import time
 
-import matplotlib as mpl
-mpl.use('TkAgg')
-import matplotlib.pyplot as plt
-
 from load_data import DataModel
 from helper_functions import iterate_minibatches
 
@@ -22,10 +18,10 @@ def build_cnn(input_shape, output_size, filter_height, input_var=None):
     # Input layer, as usual:
     network = lasagne.layers.InputLayer(shape=input_shape, input_var=input_var)
 
-    # Convolutional layer with 32 kernels of size 5x5. Strided and padded
+    # Convolutional layer with 16 kernels of size 5x5. Strided and padded
     # convolutions are supported as well; see the docstring.
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=32, filter_size=(8, 8),
+                network, num_filters=16, filter_size=(8, 8),
                 nonlinearity=lasagne.nonlinearities.rectify,
                 W=lasagne.init.GlorotUniform())
 
@@ -37,25 +33,25 @@ def build_cnn(input_shape, output_size, filter_height, input_var=None):
 
     print(lasagne.layers.get_output_shape(network))
 
-    # Another convolution with 32 5x5 kernels, and another 2x2 pooling:
+    # Another convolution with 16 5x5 kernels, and another 2x2 pooling:
     network = lasagne.layers.Conv2DLayer(
-                network, num_filters=32, filter_size=(8, 8),
+                network, num_filters=16, filter_size=(8, 8),
                 nonlinearity=lasagne.nonlinearities.rectify)
     print(lasagne.layers.get_output_shape(network))
     network = lasagne.layers.MaxPool2DLayer(network, pool_size=(4, 4))
     print(lasagne.layers.get_output_shape(network))
 
-    # A fully-connected layer of 100 units with 50% dropout on its inputs:
+    # A fully-connected layer of 64 units with 50% dropout on its inputs:
     network = lasagne.layers.DenseLayer(
                 lasagne.layers.dropout(network, p=.5),
-                num_units=100,
+                num_units=64,
                 nonlinearity=lasagne.nonlinearities.rectify)
     print(lasagne.layers.get_output_shape(network))
 
-    # A fully-connected layer of 50 units with 50% dropout on its inputs:
+    # A fully-connected layer of 32 units with 50% dropout on its inputs:
     network = lasagne.layers.DenseLayer(
                 lasagne.layers.dropout(network, p=.5),
-                num_units=50,
+                num_units=32,
                 nonlinearity=lasagne.nonlinearities.rectify)
     print(lasagne.layers.get_output_shape(network))
 
@@ -68,8 +64,8 @@ def build_cnn(input_shape, output_size, filter_height, input_var=None):
 
     return network
 
-def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=10,
-         learning_rate=0.05, batch_size=50):
+def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=100,
+         learning_rate=0.01, batch_size=50):
 
     # Initialize data model
     data_model = DataModel()
@@ -85,7 +81,7 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
     output_size = Y_test.shape[1]
 
     # Prepare Theano variables for inputs and targets
-    input_var = T.ftensor4('inputs')    # float32
+    input_var = T.tensor4('inputs')     # float64
     target_var = T.imatrix('targets')   # int32 (overkill)
 
     print("Building model and compiling functions...")
@@ -124,6 +120,7 @@ def main(loss_function=lasagne.objectives.categorical_crossentropy, num_epochs=1
         start_time = time.time()
         for batch in iterate_minibatches(X_train, Y_train, batch_size, shuffle=True):
             inputs, targets = batch
+            print(train_err)
             train_err += train_fn(inputs, targets)
             train_batches += 1
 

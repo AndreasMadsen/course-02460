@@ -8,11 +8,8 @@ import pickle
 import numpy as np
 filepath = os.path.dirname(os.path.abspath(__file__))
 
-import matplotlib as mpl
-mpl.use('TkAgg')
-import matplotlib.pyplot as plt
-
 from scipy.io import wavfile
+from scipy import signal
 
 from sklearn.cross_validation import train_test_split
 
@@ -95,6 +92,7 @@ class DataModel():
                                 data_dict[usage][dialect][speaker][f_name]['sample_rate'] = sample_rate
                                 data_dict[usage][dialect][speaker][f_name]['data_raw'] = wav_dat
                                 # Compute spectogram
+                                # TODO: Move the spectogram computation to the X generation
                                 data_dict[usage][dialect][speaker][f_name]['spectogram'] = \
                                     self.compute_spectogram(x=wav_dat, Fs=sample_rate)
 
@@ -134,15 +132,20 @@ class DataModel():
         with open(self.DATA_SET_FILE_DATA_DICT, 'rb') as f:
             self._data_dict = pickle.load(f)
 
-    def compute_spectogram(self, x, Fs, NFFT=256, noverlap=128):
+    def compute_spectogram(self, x, Fs, noverlap=128):
         """
             Computes the spectogram data image, which is being plotted by the
             pyplot.specgram function, from a given audio track `x` and a sample
             rate `Fs`.
         """
-        spec, freqs, t, im = plt.specgram(x, Fs=Fs, NFFT=NFFT, noverlap=noverlap)
+        _, _, spec = signal.spectrogram(x, Fs, noverlap=noverlap)
+        spec = np.flipud(spec)
         spec = 10. * np.log10(spec)
-        return np.flipud(spec).astype('float32')
+
+        # Normalize
+        spec = spec / np.linalg.norm(spec)
+
+        return np.flipud(spec).astype('float64')
 
     @property
     def classes(self):
