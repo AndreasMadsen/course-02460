@@ -173,11 +173,11 @@ class DataModel():
             rate `Fs`.
         """
         _, _, spec = signal.spectrogram(x, Fs, noverlap=noverlap)
-        spec = np.flipud(spec)
-        spec = 10. * np.log10(spec)
+        #spec = np.flipud(spec)
+        #spec = 10. * np.log10(spec)
 
         # Normalize
-        spec = spec / np.linalg.norm(spec)
+        #spec = spec / np.linalg.norm(spec)
 
         return np.flipud(spec).astype('float64')
 
@@ -256,7 +256,7 @@ class DataModel():
 
             # Compute spectogram
             spectogram = self.compute_spectogram(x=data['data_raw'],
-                                        Fs=data['sample_rate'])
+                                                 Fs=data['sample_rate'])
 
             # Very naive way of taking only 3 second windows of spectogram
             if spectogram.shape[1] < time_windows:
