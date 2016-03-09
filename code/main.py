@@ -81,8 +81,8 @@ def main(num_epochs=100, learning_rate=0.001, batch_size=50):
     # Save training errors to file
     np.savetxt(os.path.join(filepath, 'errors/%s.csv' % ('train_err')), train_errs, delimiter=",")
 
-    # Optionally, you could now dump the network weights to a file like this:
-    np.savez('model.npz', *lasagne.layers.get_all_param_values(network))
+    # Save model weights
+    network.save_model()
 
 
 
