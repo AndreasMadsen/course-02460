@@ -2,10 +2,11 @@
 import re
 import os
 import os.path as path
-import textwrap
+
+from timit.data_item import DataItem
 
 thisdir = path.dirname(path.realpath(__file__))
-timitdir = path.realpath(path.join(thisdir, "..", "..", "data"))
+timitdir = path.realpath(path.join(thisdir, "..", "..", "data", "timit"))
 
 usage_all = ["test", "train"]
 dialect_all = ["dr1", "dr2", "dr3", "dr4", "dr5", "dr6", "dr7", "dr8"]
@@ -76,33 +77,6 @@ class FileSelector:
         # TODO(Andreas): consider implementing this as an actual iterator
         # and not just returning a list.
         return iter(self._files)
-
-class DataItem:
-    def __init__(self, usage, dialect, sex, speaker, sentence, texttype,
-                 filename):
-        self.file = filename[len(timitdir):]
-        self.usage = usage
-        self.dialect = dialect
-        self.sex = sex
-        self.speaker = speaker
-        self.sentence = sentence
-        self.texttype = texttype
-
-        self.wav = filename + "_.WAV"
-        self.phn = filename + ".PHN"
-        self.txt = filename + ".TXT"
-        self.wrd = filename + ".WRD"
-
-    def __str__(self):
-        return textwrap.dedent("""\
-        file: {file}
-            - usage: {usage}
-            - dialect: {dialect}
-            - sex: {sex}
-            - speaker: {speaker}
-            - sentence: {sentence}
-            - texttype: {texttype}
-        """.format(**vars(self)))
 
 if __name__ == '__main__':
     for file in FileSelector(usage='train', sex='f', dialect='dr1',
