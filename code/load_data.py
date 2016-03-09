@@ -5,6 +5,7 @@ import sys
 import os
 import csv
 import pickle
+from pickle import PickleError
 import numpy as np
 filepath = os.path.dirname(os.path.abspath(__file__))
 
@@ -12,6 +13,36 @@ from scipy.io import wavfile
 from scipy import signal
 
 from sklearn.cross_validation import train_test_split
+
+class DataFilter():
+    def __init__(self, usages=None, dialects=None, speakers=None):
+        self._usages = usages
+        self._dialects = dialects
+        self._speakers = speakers
+
+    def skip_usage(self, usage):
+        if self._usages is None:
+            return False
+        elif usage in self._usages:
+            return False
+        else:
+            return True
+
+    def skip_dialect(self, dialect):
+        if self._dialects is None:
+            return False
+        elif dialect in self._dialects:
+            return False
+        else:
+            return True
+
+    def skip_speaker(self, speaker):
+        if self._speakers is None:
+            return False
+        elif speaker in self._speakers:
+            return False
+        else:
+            return True
 
 class DataModel():
     # Static variables
@@ -26,8 +57,9 @@ class DataModel():
     _X = None
     _Y = None
 
-    def __init__(self, reset=False, class_type='gender'):
-        self._class_type=class_type
+    def __init__(self, reset=False, class_type='gender', data_filter=DataFilter()):
+        self._class_type = class_type
+        self._data_filter = data_filter
 
         if reset:
             print("Reset forced!")
@@ -63,16 +95,22 @@ class DataModel():
         """
         data_dict = dict()
         for usage in ['train', 'test']:
+            if self._data_filter.skip_usage(usage):
+                continue
             data_dict[usage] = dict()
             dialect_folders = [os.path.join(self.DATA_SET_PATH,'%s/%s' % (usage, f)) \
                 for f in os.listdir(os.path.join(self.DATA_SET_PATH, '%s/' % (usage)))]
             dialect_folders = filter(lambda x: not os.path.isfile(x), dialect_folders)
             for dialect_folder in dialect_folders:
                 dialect = os.path.basename(dialect_folder)
+                if self._data_filter.skip_dialect(dialect):
+                    continue
                 data_dict[usage][dialect] = dict()
                 speaker_folders = [os.path.join(dialect_folder, f) for f in os.listdir(dialect_folder)]
                 for speaker_folder in speaker_folders:
                     speaker = os.path.basename(speaker_folder)
+                    if self._data_filter.skip_speaker(speaker):
+                        continue
                     data_dict[usage][dialect][speaker] = dict()
                     files = [os.path.join(speaker_folder, f) for f in os.listdir(speaker_folder)]
                     files = filter(lambda x: os.path.isfile(x), files)
@@ -91,10 +129,6 @@ class DataModel():
                                 sample_rate, wav_dat = wavfile.read(_f, mmap=False) # Maybe use mmap True
                                 data_dict[usage][dialect][speaker][f_name]['sample_rate'] = sample_rate
                                 data_dict[usage][dialect][speaker][f_name]['data_raw'] = wav_dat
-                                # Compute spectogram
-                                # TODO: Move the spectogram computation to the X generation
-                                data_dict[usage][dialect][speaker][f_name]['spectogram'] = \
-                                    self.compute_spectogram(x=wav_dat, Fs=sample_rate)
 
                         elif f_ext.lower() == '.phn':
                             # Time-aligned phonetic transcription
@@ -179,51 +213,83 @@ class DataModel():
     @property
     def data(self):
         if self._X is not None and self._Y is not None:
-            return self._X['train'], self._Y['train'], \
-                   self._X['val'],   self._Y['val'], \
-                   self._X['test'],  self._Y['test']
+            return self._X, self._Y
+
         try:
             print("Loading data files..")
             self.load_data_files()
-        except:
+
+        except IOError:
             print("Pickled file not found..")
             print("Creating data files from dictionary..")
             self._X, self._Y = self.create_data()
             print("Pickling files..")
             self.save_data_files()
-        return self._X['train'], self._Y['train'], \
-               self._X['val'],   self._Y['val'], \
-               self._X['test'],  self._Y['test']
+
+        return self._X, self._Y
+
+        #if self._X is not None and self._Y is not None:
+        #    return self._X['train'], self._Y['train'], \
+        #           self._X['val'],   self._Y['val'], \
+        #           self._X['test'],  self._Y['test']
+        #try:
+        #    print("Loading data files..")
+        #    self.load_data_files()
+        #except:
+        #    print("Pickled file not found..")
+        #    print("Creating data files from dictionary..")
+        #    self._X, self._Y = self.create_data()
+        #    print("Pickling files..")
+        #    self.save_data_files()
+        #return self._X['train'], self._Y['train'], \
+        #       self._X['val'],   self._Y['val'], \
+        #       self._X['test'],  self._Y['test']
 
 
-    def create_data(self, time_windows=384):
+    def create_data(self, time_windows=300):
         """
             `time_windows` = length of window
         """
-        X, Y = {}, {}
+        #X, Y = {}, {}
+        X, Y = [], []
         for usage, dialect, speaker, text_type, data in self.texts_generator():
 
+            # Compute spectogram
+            spectogram = self.compute_spectogram(x=data['data_raw'],
+                                        Fs=data['sample_rate'])
+
             # Very naive way of taking only 3 second windows of spectogram
-            if data['spectogram'].shape[1] < time_windows:
+            if spectogram.shape[1] < time_windows:
                 continue
 
-            x = data['spectogram'][:,0:time_windows]
+            x = spectogram[:,0:time_windows]
             x = x.reshape((1, 1, x.shape[0], x.shape[1]))
             y = self.class2vec(class_value=speaker[0])
 
-            if usage not in X.keys():
-                X[usage] = x
+            #if usage not in X.keys():
+            #    X[usage] = x
+            #else:
+            #    X[usage] = np.vstack((X[usage], x))
+            if len(X) == 0:
+                X = x
             else:
-                X[usage] = np.vstack((X[usage], x))
+                X = np.vstack((X, x))
 
-            if usage not in Y.keys():
-                Y[usage] = []
-            Y[usage].append(y)
+            #if usage not in Y.keys():
+            #    Y[usage] = []
+            #Y[usage].append(y)
+            if len(Y) == 0:
+                Y = y
+            else:
+                Y = np.vstack((Y, y))
 
-        for usage in Y.keys():
-            Y[usage] = np.array(Y[usage]).astype('int32')
+        #for usage in Y.keys():
+        #    Y[usage] = np.array(Y[usage]).astype('int32')
 
-        X['train'], X['val'], Y['train'], Y['val'] = train_test_split(X['train'], Y['train'], test_size=0.10, random_state=42)
+        X = np.asarray(X, dtype='float32')
+        Y = np.asarray(Y, dtype='int32')
+
+        #X['train'], X['val'], Y['train'], Y['val'] = train_test_split(X['train'], Y['train'], test_size=0.10, random_state=42)
         return X, Y
 
     def save_data_files(self):
@@ -240,10 +306,11 @@ class DataModel():
 
 def main():
     data_model = DataModel(reset=True)
-    data_dict = data_model.data_dict
-    del data_dict
-    data = data_model.data
-    del data
+    print("Data files deleted..");
+    #data_dict = data_model.data_dict
+    #del data_dict
+    #data = data_model.data
+    #del data
     #print(data_dict)
     #print(data_dict.keys())
     #print(data_dict['test'].keys())
