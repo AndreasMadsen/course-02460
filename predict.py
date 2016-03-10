@@ -32,7 +32,7 @@ def main(learning_rate=0.001, batch_size=50):
                       target_var=target_var, learning_rate=learning_rate)
 
     # Build network
-    network.build_net()
+    network.build_net(filter_height=X.shape[2])
 
     # Compile functions
     network.compile_model()
@@ -50,7 +50,7 @@ def main(learning_rate=0.001, batch_size=50):
     for i in range(0, Y.shape[0]):
         print((Y[i], y_hat[i]))
 
-    MSE = np.mean((y_hat == Y).astype(int))
+    MSE = np.mean((y_hat != Y).astype(int))
     print('Predicted %d observations' % (Y.shape[0]))
     print('MSE: %.2f' % (MSE))
 

@@ -21,11 +21,11 @@ def main():
     plt.xlabel('Epoch')
     plt.ylabel('Error')
 
-    plt.show()
-
     # Save figure
     plt.savefig(os.path.join(filepath, 'errors/%s.eps' % ('train_err')), format='eps')
     plt.savefig(os.path.join(filepath, 'errors/%s.png' % ('train_err')), format='png')
+
+    plt.show()
 
 
 
