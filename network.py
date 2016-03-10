@@ -23,26 +23,32 @@ class Network():
         self._learning_rate = learning_rate
         self._model_name    = model_name
 
-    def build_net(self):
+    def build_net(self, filter_height=8):
         print("Building model...")
 
         # Input layer, as usual:
         network = lasagne.layers.InputLayer(shape=self._input_shape, input_var=self._input_var)
+        print(lasagne.layers.get_output_shape(network))
 
         network = lasagne.layers.Conv2DLayer(incoming=network,
-                    num_filters=16, filter_size=(8, 8),
+                    num_filters=16, filter_size=(filter_height, 8),
                     nonlinearity=lasagne.nonlinearities.sigmoid)
                     #nonlinearity=lasagne.nonlinearities.rectify)
+        print(lasagne.layers.get_output_shape(network))
 
-        network = lasagne.layers.MaxPool2DLayer(network, pool_size=(4, 4))
+        #network = lasagne.layers.MaxPool2DLayer(network, pool_size=(4, 4))
+        network = lasagne.layers.MaxPool2DLayer(network, pool_size=(1, 4))
+        print(lasagne.layers.get_output_shape(network))
 
         # A fully-connected layer of 32 units with 0 dropout on its inputs:
         network = lasagne.layers.DenseLayer(incoming=network, num_units=32,
                         nonlinearity=lasagne.nonlinearities.sigmoid)
                         #nonlinearity=lasagne.nonlinearities.rectify)
+        print(lasagne.layers.get_output_shape(network))
 
         network = lasagne.layers.DenseLayer(incoming=network, num_units=self._output_size,
                         nonlinearity=lasagne.nonlinearities.softmax)
+        print(lasagne.layers.get_output_shape(network))
 
         self._network = network
 

@@ -43,7 +43,7 @@ def main(num_epochs=100, learning_rate=0.001, batch_size=50):
                       target_var=target_var, learning_rate=learning_rate)
 
     # Build network
-    network.build_net()
+    network.build_net(filter_height=X.shape[2])
 
     # Compile functions
     network.compile_model()
