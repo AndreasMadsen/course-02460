@@ -8,6 +8,8 @@ import theano.tensor as T
 import scipy.signal
 import scipy.io.wavfile
 
+from helpers.minibatch_spectogram import MinibatchSpectogram
+
 # create Theano variables for input and target minibatch
 input_var = T.tensor4('X')
 target_var = T.ivector('y')
@@ -46,23 +48,17 @@ train_fn = theano.function([input_var, target_var], loss, updates=updates)
 
 # train network (assuming you've got some training data in numpy arrays)
 print("training network")
-train_selector = timit.FileSelector(usage='train', dialect='dr1', texttype='SI')
-for epoch in range(100):
+train_selector = MinibatchSpectogram(
+    timit.FileSelector(usage='train', dialect='dr1', texttype='SI'))
+for epoch in range(10):
     loss = 0
     items = 0
-    for item in train_selector:
 
-        # Get spectogram
-        spectogram = item.spectogram()
-        if (spectogram.shape[1] < 250): continue
-        spectogram = spectogram[:, 0:250]
-        spectogram = spectogram.reshape(1, 1, *spectogram.shape)
-        items += 1
-
-        target = np.asarray([int(item.sex == 'f')], dtype='int32')
-
-        loss += train_fn(spectogram, target)
+    for (batch_input, batch_target) in train_selector:
+        items += batch_input.shape[0]
+        loss += train_fn(batch_input, batch_target)
         print(loss)
+
     print("Epoch %d: Loss %g" % (epoch + 1, loss / items))
 
 # use trained network for predictions
