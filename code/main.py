@@ -27,6 +27,7 @@ def main(num_epochs=100, learning_rate=0.001, batch_size=50):
     #X_train, Y_train, X_val, Y_val, X_test, Y_test = data_model.data
     X, Y = data_model.data
 
+
     #X_train = X_train.reshape((X_train.shape[0], 1, X_train.shape[1], X_train.shape[2]))
     #X_val = X_val.reshape((X_val.shape[0], 1, X_val.shape[1], X_val.shape[2]))
     #X_test = X_test.reshape((X_test.shape[0], 1, X_test.shape[1], X_test.shape[2]))
