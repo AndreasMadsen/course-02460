@@ -2,6 +2,7 @@
 import re
 import os
 import os.path as path
+import random
 
 from timit.data_item import DataItem
 
@@ -17,7 +18,8 @@ def _tolist(value):
     return value if isinstance(value, (list, tuple)) else [value]
 
 class FileSelector:
-    def __init__(self, usage=None, dialect=None, sex=None, texttype=None):
+    def __init__(self, usage=None, dialect=None, sex=None, texttype=None,
+                 shuffle=True):
         """Creates an iterable for iterating over all data files.
 
         It is possibol to select a subset of the files by settings an optional
@@ -34,6 +36,7 @@ class FileSelector:
         self.texttype = texttype_all if (texttype is None) else _tolist(texttype)
 
         self._files = list(self._file_list_generator())
+        self._shuffle = shuffle
 
     def _file_list_generator(self):
         for usage in self.usage:
@@ -76,7 +79,11 @@ class FileSelector:
     def __iter__(self):
         # TODO(Andreas): consider implementing this as an actual iterator
         # and not just returning a list.
-        return iter(self._files)
+        if (self._shuffle):
+            return iter(random.sample(self._files, len(self._files)))
+        else:
+            return iter(self._files)
+
 
 if __name__ == '__main__':
     for file in FileSelector(usage='train', sex='f', dialect='dr1',
