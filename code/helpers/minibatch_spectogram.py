@@ -2,22 +2,34 @@
 import numpy as np
 
 class MinibatchSpectogram:
-    def __init__(self, selector, batchsize=50, truncate_time=150, nfft=512):
+    def __init__(self, selector,
+                 batchsize=50, truncate_time=150,
+                 nfft=512, noverlap=256):
         self.selector = selector
+
         self.batchsize = batchsize
         self.truncate_time = truncate_time
-        self.nfft = nfft
+
+        self._spectogram_settings = {
+            'nfft': nfft,
+            'noverlap': noverlap
+        }
 
     def __iter__(self):
-        return MinibatchSpectogramIterator(self.selector, self.batchsize,
-                                           self.truncate_time, self.nfft)
+        return MinibatchSpectogramIterator(self.selector,
+                                           self.batchsize, self.truncate_time,
+                                           self._spectogram_settings)
 
 class MinibatchSpectogramIterator:
-    def __init__(self, selector, batchsize, truncate_time, nfft):
+    def __init__(self, selector,
+                 batchsize, truncate_time,
+                 spectogram_settings):
         self.selector = iter(selector)
+
         self.batchsize = batchsize
         self.truncate_time = truncate_time
-        self.nfft = nfft
+
+        self._spectogram_settings = spectogram_settings
 
         self._no_more_data = False
 
@@ -36,7 +48,7 @@ class MinibatchSpectogramIterator:
                 self._no_more_data = True
                 break
 
-            spectogram = item.spectogram(nfft=self.nfft)
+            spectogram = item.spectogram(**self._spectogram_settings)
 
             if (spectogram.shape[1] >= self.truncate_time):
                 spectogram = spectogram[:, 0:self.truncate_time]

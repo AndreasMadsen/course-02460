@@ -13,9 +13,9 @@ input_var = T.tensor4('X')
 target_var = T.ivector('y')
 
 # create a small convolutional neural network
-network = lasagne.layers.InputLayer(shape=(None, 1, 257, 150), input_var=input_var)
+network = lasagne.layers.InputLayer(shape=(None, 1, 129, 300), input_var=input_var)
 
-network = lasagne.layers.Conv2DLayer(network, num_filters=32, filter_size=(257, 8),
+network = lasagne.layers.Conv2DLayer(network, num_filters=16, filter_size=(129, 8),
                                      nonlinearity=lasagne.nonlinearities.sigmoid)
 
 network = lasagne.layers.MaxPool2DLayer(network, (1, 4))
@@ -48,10 +48,12 @@ loss_fn = theano.function([input_var, target_var], test_loss)
 
 # File selectors
 test_selector = MinibatchSpectogram(
-    timit.FileSelector(usage='test', dialect='dr1'))
+    timit.FileSelector(usage='test', dialect='dr1'),
+    nfft=256, truncate_time=300, noverlap=128)
 
 train_selector = MinibatchSpectogram(
-    timit.FileSelector(usage='train', dialect='dr1'))
+    timit.FileSelector(usage='train', dialect='dr1'),
+    nfft=256, truncate_time=300, noverlap=128)
 
 # train network (assuming you've got some training data in numpy arrays)
 print("training network")
@@ -69,23 +71,24 @@ plt.ion()
 
 for epoch in range(100):
     train_loss = 0
+    train_batches = 0
+
     test_loss = 0
-    items = 0
+    test_batches = 0
 
-    for (train_data, test_data) in zip(train_selector, test_selector):
-        train_batch_loss = train_fn(*train_data)
-        test_batch_loss = loss_fn(*test_data)
-        print(train_batch_loss, test_batch_loss)
+    for train_data in train_selector:
+        train_loss += train_fn(*train_data)
+        train_batches += 1
 
-        items += 1
-        train_loss += train_batch_loss
-        test_loss += test_batch_loss
+    for test_data in test_selector:
+        test_loss += loss_fn(*train_data)
+        test_batches += 1
 
     print("Epoch %d: Train Loss %g, Test Loss %g" % (
-          epoch + 1, train_loss / items, test_loss / items))
+          epoch + 1, train_loss / train_batches, test_loss / test_batches))
 
-    train_loss_arr[epoch] = train_loss / items
-    test_loss_arr[epoch] = test_loss / items
+    train_loss_arr[epoch] = train_loss / train_batches
+    test_loss_arr[epoch] = test_loss / test_batches
 
     train_points.set_data(epoch_arr, train_loss_arr)
     test_points.set_data(epoch_arr, test_loss_arr)

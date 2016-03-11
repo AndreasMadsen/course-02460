@@ -43,9 +43,8 @@ class DataItem:
         (_, signal) = scipy.io.wavfile.read(self.wav)
         return signal
 
-    def spectogram(self, nfft=512):
+    def spectogram(self, *args, **kwargs):
         signal = self.signal()
-        (_, _, spectrogram) = scipy.signal.spectrogram(signal,
-                                                       fs=self.rate,
-                                                       nfft=nfft)
+        (_, _, spectrogram) = scipy.signal.spectrogram(signal, fs=self.rate,
+                                                       *args, **kwargs)
         return spectrogram
