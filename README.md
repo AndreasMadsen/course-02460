@@ -1,8 +1,7 @@
 
 Requirements
 -----------
-- Python 2.7 or 3.4
-- pip
+- Python 3.5
 
 Install
 -------
