@@ -1,7 +1,11 @@
 
-import scipy
 import os.path as path
 import textwrap
+
+import numpy as np
+import scipy
+import scipy.io.wavfile
+import scipy.signal
 
 thisdir = path.dirname(path.realpath(__file__))
 timitdir = path.realpath(path.join(thisdir, "..", "..", "data", "timit"))
@@ -39,9 +43,9 @@ class DataItem:
         (_, signal) = scipy.io.wavfile.read(self.wav)
         return signal
 
-    def spectogram(self, nfft=256, noverlap=128):
+    def spectogram(self, nfft=512):
         signal = self.signal()
-        (_, _, spectrogram) = scipy.signal.spectrogram(signal, 1 / self.rate,
-                                                       nfft=nfft,
-                                                       noverlap=noverlap)
+        (_, _, spectrogram) = scipy.signal.spectrogram(signal,
+                                                       fs=self.rate,
+                                                       nfft=nfft)
         return spectrogram

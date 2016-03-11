@@ -2,19 +2,22 @@
 import numpy as np
 
 class MinibatchSpectogram:
-    def __init__(self, selector, batchsize=5, fixed_width=250):
+    def __init__(self, selector, batchsize=50, truncate_time=150, nfft=512):
         self.selector = selector
         self.batchsize = batchsize
-        self.fixed_width = fixed_width
+        self.truncate_time = truncate_time
+        self.nfft = nfft
 
     def __iter__(self):
-        return MinibatchSpectogramIterator(self.selector, self.batchsize, self.fixed_width)
+        return MinibatchSpectogramIterator(self.selector, self.batchsize,
+                                           self.truncate_time, self.nfft)
 
 class MinibatchSpectogramIterator:
-    def __init__(self, selector, batchsize, fixed_width):
+    def __init__(self, selector, batchsize, truncate_time, nfft):
         self.selector = iter(selector)
         self.batchsize = batchsize
-        self.fixed_width = fixed_width
+        self.truncate_time = truncate_time
+        self.nfft = nfft
 
         self._no_more_data = False
 
@@ -33,10 +36,10 @@ class MinibatchSpectogramIterator:
                 self._no_more_data = True
                 break
 
-            spectogram = item.spectogram()
+            spectogram = item.spectogram(nfft=self.nfft)
 
-            if (spectogram.shape[1] >= self.fixed_width):
-                spectogram = spectogram[:, 0:self.fixed_width]
+            if (spectogram.shape[1] >= self.truncate_time):
+                spectogram = spectogram[:, 0:self.truncate_time]
                 spectogram = spectogram.reshape(1, *spectogram.shape)
 
                 input_items.append(spectogram)
@@ -47,4 +50,7 @@ class MinibatchSpectogramIterator:
         if (num_items == 0): raise StopIteration
 
         # If some data was collected return that as a batch
-        return (np.asarray(input_items), np.asarray(target_items, dtype='int32'))
+        return (
+            np.asarray(input_items, dtype='float32'),  # input
+            np.asarray(target_items, dtype='int32')  # target
+        )
