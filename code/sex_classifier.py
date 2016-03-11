@@ -93,3 +93,6 @@ for epoch in range(100):
     train_points.set_data(epoch_arr, train_loss_arr)
     test_points.set_data(epoch_arr, test_loss_arr)
     plt.pause(0.1)
+
+plt.ioff()
+plt.show()
