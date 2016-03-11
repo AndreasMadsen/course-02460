@@ -12,7 +12,7 @@ filepath = os.path.dirname(os.path.abspath(__file__))
 
 class Network():
 
-    MODEL_FOLDER = os.path.join(filepath, 'models/')
+    MODEL_FOLDER = os.path.join(filepath, '../models/')
 
     def __init__(self, input_shape=None, output_size=None, input_var=None, target_var=None,
                  learning_rate=0.10, model_name='model-1'):

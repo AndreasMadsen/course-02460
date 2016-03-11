@@ -80,7 +80,7 @@ def main(num_epochs=100, learning_rate=0.001, batch_size=50):
     print("  training loss:\t\t\t{:.6f}".format(test_err / test_batches))
 
     # Save training errors to file
-    np.savetxt(os.path.join(filepath, 'errors/%s.csv' % ('train_err')), train_errs, delimiter=",")
+    np.savetxt(os.path.join(filepath, '../errors/%s.csv' % ('train_err')), train_errs, delimiter=",")
 
     # Save model weights
     network.save_model()
