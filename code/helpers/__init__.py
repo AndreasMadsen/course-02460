@@ -1,2 +1,3 @@
 
-from helpers.minibatch_spectogram import MinibatchSpectogram
+from helpers.minibatch import Minibatch
+from helpers.truncate_spectogram import TruncateSpectogram
