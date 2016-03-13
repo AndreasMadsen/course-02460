@@ -13,12 +13,12 @@ cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
 
 # File selectors
-test_selector = helpers.TruncateSpectogram(
+test_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='test', dialect='dr1'),
     truncate=300, nfft=256, noverlap=128)
 test_iterable = helpers.Minibatch(test_selector, cache=True)
 
-train_selector = helpers.TruncateSpectogram(
+train_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='train', dialect='dr1'),
     truncate=300, nfft=256, noverlap=128)
 train_iterable = helpers.Minibatch(train_selector, cache=True)
