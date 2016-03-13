@@ -14,7 +14,7 @@ class SimpleCNN(NetworkAbstraction):
         )
 
         if (len(self.input_shape) != 3):
-            print('expected input shape with 3 elements')
+            raise ValueError('expected input shape with 3 elements')
 
         self._learning_params = {
             'learning_rate': learning_rate,
