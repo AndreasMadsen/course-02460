@@ -46,10 +46,10 @@ class DataFilter():
 
 class DataModel():
     # Static variables
-    DATA_SET_PATH   = os.path.join(filepath, 'data/timit/')
-    DATA_SET_FILE_DATA_DICT = os.path.join(filepath, 'data/data_dict')
-    DATA_SET_FILE_X = os.path.join(filepath, 'data/X')
-    DATA_SET_FILE_Y = os.path.join(filepath, 'data/Y')
+    DATA_SET_PATH   = os.path.join(filepath, '../data/timit/')
+    DATA_SET_FILE_DATA_DICT = os.path.join(filepath, '../data/data_dict')
+    DATA_SET_FILE_X = os.path.join(filepath, '../data/X')
+    DATA_SET_FILE_Y = os.path.join(filepath, '../data/Y')
 
     _data_dict = None
     _class_type = None
