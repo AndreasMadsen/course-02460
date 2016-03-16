@@ -15,18 +15,20 @@ cnn.compile()
 # File selectors
 test_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='test', dialect='dr1'),
-    truncate=300, nfft=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128)
 test_iterable = helpers.Minibatch(test_selector, cache=True)
 
 train_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='train', dialect='dr1'),
-    truncate=300, nfft=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128)
 train_iterable = helpers.Minibatch(train_selector, cache=True)
 
+epochs = 300
+
 # Setup data containers and matplotlib
-train_loss_arr = np.zeros(100)
-test_loss_arr = np.zeros(100)
-epoch_arr = np.arange(1, 100 + 1)
+train_loss_arr = np.zeros(epochs)
+test_loss_arr = np.zeros(epochs)
+epoch_arr = np.arange(1, epochs + 1)
 
 fig, ax = plt.subplots()
 train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
@@ -36,7 +38,7 @@ plt.legend()
 plt.ion()
 
 # Train network
-for epoch in range(100):
+for epoch in range(epochs):
     train_loss = 0
     train_batches = 0
 
