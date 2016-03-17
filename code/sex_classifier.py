@@ -68,5 +68,14 @@ for epoch in range(epochs):
     test_points.set_data(epoch_arr, test_loss_arr)
     plt.pause(0.1)
 
+missclassifications = 0
+observations = 0
+for (test_input, test_target) in test_iterable:
+    predict = np.argmax(cnn.predict(test_input), axis=1)
+    observations += len(predict)
+    missclassifications += np.sum(predict != test_target)
+
+print('missrate: %f' % (missclassifications / observations))
+
 plt.ioff()
 plt.show()
