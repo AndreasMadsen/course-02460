@@ -9,18 +9,20 @@ import timit
 import network
 import helpers
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
 
 # File selectors
 test_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='test', dialect='dr1'),
-    truncate=300, nperseg=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128,
+    normalize_spectogram=True, log_transform=True)
 test_iterable = helpers.Minibatch(test_selector, cache=True)
 
 train_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='train', dialect='dr1'),
-    truncate=300, nperseg=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128,
+    normalize_spectogram=True, log_transform=True)
 train_iterable = helpers.Minibatch(train_selector, cache=True)
 
 epochs = 300
@@ -36,6 +38,9 @@ test_points, = ax.plot(epoch_arr, test_loss_arr, label='test')
 plt.ylim(0, 1)
 plt.legend()
 plt.ion()
+
+for test_data in test_iterable:
+    print(np.mean(cnn.predict(test_data[0]), axis=0))
 
 # Train network
 for epoch in range(epochs):
