@@ -14,7 +14,7 @@ cnn.compile()
 
 def create_selector(usage):
     selector = timit.FileSelector(usage=usage, dialect='dr1')
-    selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128)
+    selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
     selector = helpers.Normalize(selector)
     selector = helpers.Minibatch(selector, cache=True)

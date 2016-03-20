@@ -39,12 +39,20 @@ class DataItem:
             - texttype: {texttype}
         """.format(**vars(self)))
 
-    def signal(self):
+    def signal(self, normalize_signal=False):
         (_, signal) = scipy.io.wavfile.read(self.wav)
+
+        # There is an issue in numpy where np.linalg.norm can overflow for
+        # 16bit ints. Thus the signal is converted to float32 if normalized
+        # https://github.com/numpy/numpy/issues/6128
+        if (normalize_signal):
+            signal = signal / np.linalg.norm(signal.astype('float32'))
+
         return signal
 
-    def spectrogram(self, normalize_spectogram=False, *args, **kwargs):
-        signal = self.signal()
+    def spectrogram(self, normalize_signal=False, normalize_spectogram=False,
+                    *args, **kwargs):
+        signal = self.signal(normalize_signal=normalize_signal)
         (_, _, spectrogram) = scipy.signal.spectrogram(signal, fs=self.rate,
                                                        *args, **kwargs)
 
