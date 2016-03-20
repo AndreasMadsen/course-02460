@@ -9,21 +9,19 @@ import timit
 import network
 import helpers
 
-cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
 
-# File selectors
-test_selector = helpers.TruncateSpectrogram(
-    timit.FileSelector(usage='test', dialect='dr1'),
-    truncate=300, nperseg=256, noverlap=128,
-    normalize_spectogram=True, log_transform=True)
-test_iterable = helpers.Minibatch(test_selector, cache=True)
+def create_selector(usage):
+    selector = timit.FileSelector(usage=usage, dialect='dr1')
+    selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128)
+    selector = helpers.Truncate(selector, truncate=300, axis=2)
+    selector = helpers.Normalize(selector)
+    selector = helpers.Minibatch(selector, cache=True)
+    return selector
 
-train_selector = helpers.TruncateSpectrogram(
-    timit.FileSelector(usage='train', dialect='dr1'),
-    truncate=300, nperseg=256, noverlap=128,
-    normalize_spectogram=True, log_transform=True)
-train_iterable = helpers.Minibatch(train_selector, cache=True)
+test_selector = create_selector('test')
+train_selector = create_selector('train')
 
 epochs = 300
 
@@ -39,7 +37,7 @@ plt.ylim(0, 1)
 plt.legend()
 plt.ion()
 
-for test_data in test_iterable:
+for test_data in test_selector:
     print(np.mean(cnn.predict(test_data[0]), axis=0))
 
 # Train network
@@ -50,11 +48,11 @@ for epoch in range(epochs):
     test_loss = 0
     test_batches = 0
 
-    for train_data in train_iterable:
+    for train_data in train_selector:
         train_loss += cnn.train(*train_data)
         train_batches += 1
 
-    for test_data in test_iterable:
+    for test_data in test_selector:
         test_loss += cnn.loss(*test_data)
         test_batches += 1
 
@@ -70,7 +68,7 @@ for epoch in range(epochs):
 
 missclassifications = 0
 observations = 0
-for (test_input, test_target) in test_iterable:
+for (test_input, test_target) in test_selector:
     predict = np.argmax(cnn.predict(test_input), axis=1)
     observations += len(predict)
     missclassifications += np.sum(predict != test_target)
