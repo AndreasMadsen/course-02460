@@ -9,24 +9,28 @@ import timit
 import network
 import helpers
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
 
 # File selectors
 test_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='test', dialect='dr1'),
-    truncate=300, nfft=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128,
+    normalize_spectogram=True, log_transform=True)
 test_iterable = helpers.Minibatch(test_selector, cache=True)
 
 train_selector = helpers.TruncateSpectrogram(
     timit.FileSelector(usage='train', dialect='dr1'),
-    truncate=300, nfft=256, noverlap=128)
+    truncate=300, nperseg=256, noverlap=128,
+    normalize_spectogram=True, log_transform=True)
 train_iterable = helpers.Minibatch(train_selector, cache=True)
 
+epochs = 300
+
 # Setup data containers and matplotlib
-train_loss_arr = np.zeros(100)
-test_loss_arr = np.zeros(100)
-epoch_arr = np.arange(1, 100 + 1)
+train_loss_arr = np.zeros(epochs)
+test_loss_arr = np.zeros(epochs)
+epoch_arr = np.arange(1, epochs + 1)
 
 fig, ax = plt.subplots()
 train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
@@ -35,8 +39,11 @@ plt.ylim(0, 1)
 plt.legend()
 plt.ion()
 
+for test_data in test_iterable:
+    print(np.mean(cnn.predict(test_data[0]), axis=0))
+
 # Train network
-for epoch in range(100):
+for epoch in range(epochs):
     train_loss = 0
     train_batches = 0
 
@@ -60,6 +67,15 @@ for epoch in range(100):
     train_points.set_data(epoch_arr, train_loss_arr)
     test_points.set_data(epoch_arr, test_loss_arr)
     plt.pause(0.1)
+
+missclassifications = 0
+observations = 0
+for (test_input, test_target) in test_iterable:
+    predict = np.argmax(cnn.predict(test_input), axis=1)
+    observations += len(predict)
+    missclassifications += np.sum(predict != test_target)
+
+print('missrate: %f' % (missclassifications / observations))
 
 plt.ioff()
 plt.show()
