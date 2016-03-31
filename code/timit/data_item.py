@@ -46,7 +46,8 @@ class DataItem:
         # 16bit ints. Thus the signal is converted to float32 if normalized
         # https://github.com/numpy/numpy/issues/6128
         if (normalize_signal):
-            signal = signal / np.linalg.norm(signal.astype('float32'))
+            signal = signal.astype('float32')
+            signal = signal / np.linalg.norm(signal)
 
         return signal
 
