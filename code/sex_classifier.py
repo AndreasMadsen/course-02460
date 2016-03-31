@@ -1,4 +1,5 @@
 
+import os
 import numpy as np
 import lasagne
 import theano
@@ -9,8 +10,12 @@ import timit
 import network
 import helpers
 
+def display_active():
+    return len(os.environ["DISPLAY"]) > 0
+
 cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
+
 
 def create_selector(usage):
     selector = timit.FileSelector(usage=usage, dialect='dr1')
@@ -30,12 +35,13 @@ train_loss_arr = np.zeros(epochs)
 test_loss_arr = np.zeros(epochs)
 epoch_arr = np.arange(1, epochs + 1)
 
-fig, ax = plt.subplots()
-train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
-test_points, = ax.plot(epoch_arr, test_loss_arr, label='test')
-plt.ylim(0, 1)
-plt.legend()
-plt.ion()
+if display_active():
+    fig, ax = plt.subplots()
+    train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
+    test_points, = ax.plot(epoch_arr, test_loss_arr, label='test')
+    plt.ylim(0, 1)
+    plt.legend()
+    plt.ion()
 
 for test_data in test_selector:
     print(np.mean(cnn.predict(test_data[0]), axis=0))
@@ -62,9 +68,10 @@ for epoch in range(epochs):
     train_loss_arr[epoch] = train_loss / train_batches
     test_loss_arr[epoch] = test_loss / test_batches
 
-    train_points.set_data(epoch_arr, train_loss_arr)
-    test_points.set_data(epoch_arr, test_loss_arr)
-    plt.pause(0.1)
+    if display_active():
+        train_points.set_data(epoch_arr, train_loss_arr)
+        test_points.set_data(epoch_arr, test_loss_arr)
+        plt.pause(0.1)
 
 missclassifications = 0
 observations = 0
@@ -75,5 +82,6 @@ for (test_input, test_target) in test_selector:
 
 print('missrate: %f' % (missclassifications / observations))
 
-plt.ioff()
-plt.show()
+if display_active():
+    plt.ioff()
+    plt.show()
