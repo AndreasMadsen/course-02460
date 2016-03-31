@@ -1,7 +1,7 @@
 numpy==1.10.4
 scipy==0.17.0
 #theano==0.7
-git+https://github.com/Theano/Theano.git@15c90dd3
+git+git://github.com/Theano/Theano.git
 lasagne==0.1
 sklearn
 matplotlib==1.5.1
