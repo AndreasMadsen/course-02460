@@ -94,6 +94,15 @@ class NetworkAbstraction:
         if (not self._compiled): raise Exception('network is not compiled')
         return self._loss_fn(input, target)
 
+    def print_network_shapes(self):
+        if (not self._compiled): raise Exception('network is not compiled')
+        layers = lasagne.layers.get_all_layers(self._network)
+        layers = list(filter(lambda x: not isinstance(x, lasagne.layers.DropoutLayer), layers))
+        print('Network size:')
+        for i, layer in enumerate(layers):
+            shape = lasagne.layers.get_output_shape(layer)
+            print('%d) %16s %s' % (i+1, type(layer).__name__, shape))
+
     def all_layer_outputs(self, input):
         if (not self._compiled): raise Exception('network is not compiled')
         if (not hasattr(self, '_all_layers_fn')):
