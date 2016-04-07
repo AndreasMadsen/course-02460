@@ -28,7 +28,8 @@ test_selector  = helpers.Minibatch(selector.test, cache=True)
 # Number of output units
 speakers_count = len(speakers)
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.05)
+#cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.05)
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.001)
 cnn.compile()
 
 epochs = 300
