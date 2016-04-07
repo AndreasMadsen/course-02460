@@ -9,9 +9,12 @@ import matplotlib.pyplot as plt
 import timit
 import network
 import helpers
-
+import platform
 def display_active():
-    return len(os.environ["DISPLAY"]) > 0
+    if platform.system()=="Windows":
+        return True
+    else:
+        return len(os.environ["DISPLAY"]) > 0
 
 cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
