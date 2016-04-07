@@ -28,10 +28,10 @@ test_selector  = helpers.Minibatch(selector.test, cache=True)
 # Number of output units
 speakers_count = len(speakers)
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.10)
+cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.05)
 cnn.compile()
 
-epochs = 500
+epochs = 300
 
 # Setup data containers and matplotlib
 train_loss_arr = np.zeros(epochs)
