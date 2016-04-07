@@ -20,7 +20,7 @@ speakers_count = np.zeros(shape=speakers.shape)
 for selector in [train_selector, test_selector]:
     for _, target in selector:
         for item in target:
-            speakers_count += item
+            speakers_count[item] += 1
 
 # Print speakers count result
 for speaker, count in zip(speakers, speakers_count):
@@ -28,6 +28,7 @@ for speaker, count in zip(speakers, speakers_count):
 print('')
 
 # Other details
+print('Number of speakers: %d' % (len(speakers)))
 print('min speaker count: %d' % (np.min(speakers_count)))
 print('max speaker count: %d' % (np.max(speakers_count)))
 print('mean speaker counts: %d' % (np.mean(speakers_count)))
