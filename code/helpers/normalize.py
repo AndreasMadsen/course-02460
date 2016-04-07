@@ -8,7 +8,7 @@ class Normalize:
         self._iterable = iterable
 
         if mean is None or stddev is None:
-            inputs = np.asarray([input for input, target in iterable])
+            inputs = np.asarray([input for input, _ in iterable])
 
         if mean is None:
             self.mean = np.mean(inputs.ravel())

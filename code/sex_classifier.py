@@ -16,12 +16,9 @@ def display_active():
     else:
         return len(os.environ["DISPLAY"]) > 0
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
-cnn.compile()
-
-
 def create_selector(usage):
-    selector = timit.FileSelector(usage=usage, dialect='dr1')
+    selector = timit.FileSelector(usage=usage, dialect=None)
+    selector = helpers.TargetType(selector, target_type='sex')
     selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
     selector = helpers.Normalize(selector)
@@ -31,7 +28,10 @@ def create_selector(usage):
 test_selector = create_selector('test')
 train_selector = create_selector('train')
 
-epochs = 300
+cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+cnn.compile()
+
+epochs = 100
 
 # Setup data containers and matplotlib
 train_loss_arr = np.zeros(epochs)
