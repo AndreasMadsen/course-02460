@@ -2,26 +2,20 @@
 import numpy as np
 
 class Minibatch:
-    def __init__(self, data_iterable, batchsize=50, cache=False,
+    def __init__(self, data_iterable, batchsize=50,
                  input_type='float32', target_type='int32'):
         self._data_iterable = data_iterable
         self._batchsize = 50
-        self._cache = cache
         self._input_type = input_type
         self._target_type = target_type
 
-        if (cache):
-            (input_data, target_data) = zip(*data_iterable)
-            self._input_cache = np.asarray(input_data, dtype=self._input_type)
-            self._target_cache = np.asarray(target_data, dtype=self._target_type)
+        (input_data, target_data) = zip(*data_iterable)
+        self._input_cache = np.asarray(input_data, dtype=self._input_type)
+        self._target_cache = np.asarray(target_data, dtype=self._target_type)
 
     def __iter__(self):
-        if (self._cache is False):
-            return MinibatchLazy(self._data_iterable, self._batchsize,
-                                 self._input_type, self._target_type)
-        else:
-            return MinibatchCache(self._input_cache, self._target_cache,
-                                  self._batchsize)
+        return MinibatchCache(self._input_cache, self._target_cache,
+                              self._batchsize)
 
     @property
     def data(self):

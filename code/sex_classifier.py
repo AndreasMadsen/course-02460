@@ -19,7 +19,7 @@ def create_selector(usage):
     selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
     selector = helpers.Normalize(selector)
-    selector = helpers.Minibatch(selector, cache=True)
+    selector = helpers.Minibatch(selector)
     return selector
 
 test_selector = create_selector('test')
