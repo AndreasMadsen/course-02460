@@ -4,7 +4,16 @@
 \subsection{Notes from meeting}
 
 \begin{itemize}
-\item
+\item Sex classification is too easy a problem. Try speaker classification.
+\item What tranformation function $s(x, \alpha)$ makes sense to be invariant to.
+\item Transformations could be
+\begin{itemize}
+  \item Pitch shift
+  \item Hoarse voice
+  \item Noise
+  \item Filter (e.g. \textit{low-pass})
+\end{itemize}
+\item No free lunch theorem.
 \end{itemize}
 
 \subsection{For next meeting}
@@ -12,5 +21,7 @@
 \textbf{Next meeting on April 14th}
 
 \begin{itemize}
-\item
+\item Try classifying speakers instead of sex.
+\item Look at audio degredation toolbox as tranformation function we want the network to be invariant to.
+\item Try to implement the explicit tranformation invariance term to the loss function.
 \end{itemize}
