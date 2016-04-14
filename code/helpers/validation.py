@@ -3,6 +3,10 @@ import numpy as np
 
 class Validation:
     def __init__(self, selector, test_fraction=0.33, stratified=False, **kwargs):
+        """
+            Splits selector into train and test data.
+            If `stratified` is True the split will assure evenly splitted classes.
+        """
         self.selector = selector
 
         # Load all targets (labels)
@@ -50,8 +54,9 @@ class Validation:
 
         else:
             # Simple split
-            for idx in self.indices:
-                split_idx[idx] = int(idx < self.n_split)
+            for i in range(0, n):
+                split_idx[i] = int(i < self.n_split)
+
 
         self.split_idx = split_idx
 
