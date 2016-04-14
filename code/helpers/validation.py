@@ -10,12 +10,7 @@ class Validation:
 
         # Create shuffled index array
         n = len(labels)
-        self.indices = np.arange(n)
-        np.random.shuffle(self.indices)
         self.n_split = int(n * test_fraction)
-
-        print('n = %d' % (n))
-        print(np.max(self.indices))
 
         # Create idx splitting mapping
         # 0 = Train
@@ -25,56 +20,49 @@ class Validation:
         if stratified:
             # Make label counter for train and test
             labels_unique = sorted(list(set(labels)))
-            label_count_train = { label: 0 for label in labels_unique }
-            label_count_test  = { label: 0 for label in labels_unique }
+            label_count_train = {label: 0 for label in labels_unique}
+            label_count_test  = {label: 0 for label in labels_unique}
 
-            #for i, idx in enumerate(self.indices):
             for i in range(0, n):
-                idx = self.indices[i]
-                label = labels[idx]
+                label = labels[i]
 
                 # Make sure atleast 1 of each label is present in train and test
                 if label_count_train[label] == 0:
-                    split_idx[idx] = 0
+                    split_idx[i] = 0
                     label_count_train[label] += 1
                     continue
 
                 if label_count_test[label] == 0:
-                    split_idx[idx] = 1
+                    split_idx[i] = 1
                     label_count_test[label] += 1
                     continue
 
                 # If one label already is present in train and test, add label
                 # according to the fraction of labels in test.
-                label_test_fraction = float(label_count_test[label]) / float(label_count_train[label] + label_count_test[label])
+                label_test_fraction = label_count_test[label] / (label_count_train[label] + label_count_test[label])
 
                 if label_test_fraction > test_fraction:
-                    split_idx[idx] = 0
+                    split_idx[i] = 0
                     label_count_train[label] += 1
                 else:
-                    split_idx[idx] = 1
+                    split_idx[i] = 1
                     label_count_test[label] += 1
-
-            print(label_count_train)
-            print(label_count_test)
 
         else:
             # Simple split
             for idx in self.indices:
                 split_idx[idx] = int(idx < self.n_split)
 
-        print(split_idx.keys())
-
         self.split_idx = split_idx
 
     @property
     def train(self):
         for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[self.indices[i]] == 0):
+            if (self.split_idx[i] == 0):
                 yield input, target
 
     @property
     def test(self):
         for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[self.indices[i]] == 1):
+            if (self.split_idx[i] == 1):
                 yield input, target
