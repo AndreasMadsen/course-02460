@@ -18,7 +18,8 @@ def _tolist(value):
     return value if isinstance(value, (list, tuple)) else [value]
 
 class FileSelector:
-    def __init__(self, usage=None, dialect=None, sex=None, texttype=None):
+    def __init__(self, usage=None, dialect=None, sex=None, texttype=None,
+                 shuffle=True):
         """Creates an iterable for iterating over all data files.
 
         It is possibol to select a subset of the files by settings an optional
@@ -35,6 +36,9 @@ class FileSelector:
         self.texttype = texttype_all if (texttype is None) else _tolist(texttype)
 
         self._files = list(self._file_list_generator())
+
+        if (shuffle):
+            random.shuffle(x)
 
     def _file_list_generator(self):
         for usage in self.usage:

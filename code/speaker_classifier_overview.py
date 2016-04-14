@@ -13,10 +13,6 @@ selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
 selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
-#import sys
-#sys.exit()
-
-
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
