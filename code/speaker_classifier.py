@@ -16,7 +16,7 @@ display_active = "DISPLAY" in os.environ and len(os.environ["DISPLAY"]) > 0
 # Create data selector object
 selector = timit.FileSelector(dialect=None)
 selector = helpers.TargetType(selector, target_type='speaker')
-speakers = selector.get_speakers()
+speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
@@ -26,7 +26,7 @@ train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
 # Number of output units
-speakers_count = len(speakers)
+speakers_count = len(speakers.keys())
 
 #cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.05)
 cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.001)
@@ -51,6 +51,7 @@ for test_data in test_selector:
     print(np.mean(cnn.predict(test_data[0]), axis=0))
 
 # Train network
+max_error = 1.0
 for epoch in range(epochs):
     train_loss = 0
     train_batches = 0
@@ -75,6 +76,8 @@ for epoch in range(epochs):
     if display_active:
         train_points.set_data(epoch_arr, train_loss_arr)
         test_points.set_data(epoch_arr, test_loss_arr)
+        max_error = max(max_error, np.max(np.concatenate((train_loss_arr.ravel(), test_loss_arr.ravel()))))
+        ax.set_ylim([0, max_error])
         plt.pause(0.1)
 
 missclassifications = 0
