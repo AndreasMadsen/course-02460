@@ -16,7 +16,7 @@ display_active = "DISPLAY" in os.environ and len(os.environ["DISPLAY"]) > 0
 # Create data selector object
 selector = timit.FileSelector(dialect=None)
 selector = helpers.TargetType(selector, target_type='speaker')
-speakers = selector._speakers
+speakers = selector.get_speakers()
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
