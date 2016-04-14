@@ -20,7 +20,8 @@ speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
-selector = helpers.Validation(selector, test_fraction=0.25)
+selector = helpers.Filter(selector, min_count=10)
+selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
@@ -29,10 +30,14 @@ test_selector  = helpers.Minibatch(selector.test)
 speakers_count = len(speakers.keys())
 
 #cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.05)
-cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True, learning_rate=0.001)
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=speakers_count, verbose=True,
+                          learning_rate=0.001, regularization=True, dropout=True)
 cnn.compile()
 
-epochs = 300
+#epochs = 20    # no reg no dropout: missrate: 0.975309
+#epochs = 200   # reg    no dropout: missrate: 0.962963
+#epochs = 35    # no reg dropout:    missrate: 0.954733
+epochs = 100    # reg    dropout:    missrate: 0.954733
 
 # Setup data containers and matplotlib
 train_loss_arr = np.zeros(epochs)
