@@ -16,7 +16,9 @@ class TargetType:
             self._target_function = self._sex_target
         elif (target_type == 'speaker'):
             # Gather all speakers in an array
-            self._speakers = np.array(sorted(list(set([item.speaker for item in self._iterable]))))
+            #self._speakers = np.array(sorted(list(set([item.speaker for item in self._iterable]))))
+            speaker_types = sorted(list(set([item.speaker for item in self._iterable])))
+            self._speakers = { speaker: idx for idx, speaker in enumerate(speaker_types)}
             self._target_function = self._speaker_target
         else:
             raise ValueError('target_type could not be found!')
@@ -27,5 +29,10 @@ class TargetType:
 
     def _speaker_target(self, item):
         """ Returns one-hit vector for a given speaker. """
-        return int(np.where(self._speakers == item.speaker)[0])
+        return self._speakers[item.speaker]
+        #return int(np.where(self._speakers == item.speaker)[0])
         #return (self._speakers == item.speaker).astype('int')
+
+    def get_speakers(self):
+        if (hasattr(self, '_speakers') and self._speakers is not None):
+            return self._speakers.keys()
