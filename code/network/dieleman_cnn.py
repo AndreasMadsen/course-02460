@@ -51,6 +51,9 @@ class DielemanCNN(NetworkAbstraction):
             pool_size=(1, 4)
         )
 
+        if (self._dropout):
+            network = lasagne.layers.DropoutLayer(network, p=0.5)
+
         network = lasagne.layers.DenseLayer(
             incoming=network,
             num_units=100,
@@ -70,6 +73,8 @@ class DielemanCNN(NetworkAbstraction):
     def _loss_function(self, prediction):
         loss = lasagne.objectives.categorical_crossentropy(prediction, self.target_var)
         loss = loss.mean()
+        if (self._regularization):
+            loss += self._reg2_term * 1e-1
         return loss
 
     def _update_function(self, loss, parameters):

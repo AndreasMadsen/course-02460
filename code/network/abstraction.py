@@ -3,8 +3,8 @@ import lasagne
 import theano
 
 class NetworkAbstraction:
-    def __init__(self, input_shape, output_units, input_var, target_var, *args,
-                 verbose=False, **kwargs):
+    def __init__(self, input_shape, output_units, input_var, target_var,
+                 regularization=False, dropout=False, *args, verbose=False, **kwargs):
         self.input_shape = input_shape
         self.output_units = output_units
 
@@ -13,6 +13,9 @@ class NetworkAbstraction:
 
         self._verbose = verbose
         self._compiled = False
+
+        self._regularization = regularization
+        self._dropout = dropout
 
         self._print('Network initalized')
 
@@ -32,6 +35,13 @@ class NetworkAbstraction:
         self._print('Compiling network ...')
         network = self._build_network()
         parameters = lasagne.layers.get_all_params(network, trainable=True)
+
+        # Setup regularization
+        if (self._regularization):
+            self._reg2_term = lasagne.regularization.regularize_network_params(
+                network,
+                lasagne.regularization.l2
+            )
 
         # Build train function
         prediction_train = lasagne.layers.get_output(network)
