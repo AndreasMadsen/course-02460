@@ -38,7 +38,7 @@ class FileSelector:
         self._files = list(self._file_list_generator())
 
         if (shuffle):
-            random.shuffle(x)
+            random.shuffle(self._files)
 
     def _file_list_generator(self):
         for usage in self.usage:
