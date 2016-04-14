@@ -22,8 +22,8 @@ selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
 selector = helpers.Validation(selector, test_fraction=0.25)
 
-train_selector = helpers.Minibatch(selector.train, cache=True)
-test_selector  = helpers.Minibatch(selector.test, cache=True)
+train_selector = helpers.Minibatch(selector.train)
+test_selector  = helpers.Minibatch(selector.test)
 
 # Number of output units
 speakers_count = len(speakers)
