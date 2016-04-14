@@ -16,7 +16,7 @@ class TargetType:
             self._target_function = self._sex_target
         elif (target_type == 'speaker'):
             # Gather all speakers in an array
-            self._speakers = np.array(list(set([item.speaker for item in self._iterable])))
+            self._speakers = np.array(sorted(list(set([item.speaker for item in self._iterable]))))
             self._target_function = self._speaker_target
         else:
             raise ValueError('target_type could not be found!')
