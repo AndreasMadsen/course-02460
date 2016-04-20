@@ -1,5 +1,5 @@
 
-import numpy as np
+import collections
 
 class Validation:
     def __init__(self, selector, test_fraction=0.33, stratified=False, **kwargs):
@@ -7,67 +7,55 @@ class Validation:
             Splits selector into train and test data.
             If `stratified` is True the split will assure evenly splitted classes.
         """
-        self.selector = selector
-
-        # Load all targets (labels)
-        labels = [target for (_, target) in self.selector]
-
-        # Create shuffled index array
-        n = len(labels)
-        self.n_split = int(n * test_fraction)
+        self._selector = selector
 
         # Create idx splitting mapping
         # 0 = Train
         # 1 = Test
-        split_idx = {}
+        self._split_idx = list()
 
+        # TODO (Andreas): I'm pretty sure these for loops can be moved inside
+        # the train and test methods, since the selector order is deterministic.
         if stratified:
-            # Make label counter for train and test
-            labels_unique = sorted(list(set(labels)))
-            label_count_train = {label: 0 for label in labels_unique}
-            label_count_test  = {label: 0 for label in labels_unique}
+            # Count labels in each subset
+            in_test = collections.Counter()
+            in_train = collections.Counter()
 
-            for i in range(0, n):
-                label = labels[i]
-
-                # Make sure atleast 1 of each label is present in train and test
-                if label_count_train[label] == 0:
-                    split_idx[i] = 0
-                    label_count_train[label] += 1
-                    continue
-
-                if label_count_test[label] == 0:
-                    split_idx[i] = 1
-                    label_count_test[label] += 1
-                    continue
-
-                # If one label already is present in train and test, add label
-                # according to the fraction of labels in test.
-                label_test_fraction = label_count_test[label] / (label_count_train[label] + label_count_test[label])
-
-                if label_test_fraction > test_fraction:
-                    split_idx[i] = 0
-                    label_count_train[label] += 1
+            # Divide dataset
+            for i, (input, target) in enumerate(self._selector):
+                if self._test_ratio(in_test[target], in_train[target]) < test_fraction:
+                    self._split_idx.append(1)
+                    in_test[target] += 1
                 else:
-                    split_idx[i] = 1
-                    label_count_test[label] += 1
-
+                    self._split_idx.append(0)
+                    in_train[target] += 1
         else:
-            # Simple split
-            for i in range(0, n):
-                split_idx[i] = int(i < self.n_split)
+            # Count labels in each subset
+            in_test = 0
+            in_train = 0
 
+            # Divide dataset
+            for i, _ in enumerate(self._selector):
+                if self._test_ratio(in_test, in_train) < test_fraction:
+                    self._split_idx.append(1)
+                    in_test += 1
+                else:
+                    self._split_idx.append(0)
+                    in_train += 1
 
-        self.split_idx = split_idx
+    @staticmethod
+    def _test_ratio(in_test, in_train):
+        if in_test + in_train == 0: return 0
+        return in_test / (in_test + in_train)
 
     @property
     def train(self):
-        for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[i] == 0):
-                yield input, target
+        for i, (input, target) in enumerate(self._selector):
+            if self._split_idx[i] == 0:
+                yield (input, target)
 
     @property
     def test(self):
-        for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[i] == 1):
-                yield input, target
+        for i, (input, target) in enumerate(self._selector):
+            if self._split_idx[i] == 1:
+                yield (input, target)
