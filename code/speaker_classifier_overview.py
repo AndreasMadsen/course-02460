@@ -5,22 +5,22 @@ import timit
 import helpers
 
 # Create data selector object
-selector = timit.FileSelector(dialect=None)
+selector = timit.FileSelector()
 selector = helpers.TargetType(selector, target_type='speaker')
 speakers = selector.labels
+selector = helpers.Filter(selector, min_count=10, min_size=300, nperseg=256, noverlap=128)
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
-selector = helpers.Filter(selector, min_count=10)
 selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
 # Count speakers
-speakers_count = np.zeros(shape=len(speakers.keys()))
-speakers_count_train = np.zeros(shape=len(speakers.keys()))
-speakers_count_test  = np.zeros(shape=len(speakers.keys()))
+speakers_count = np.zeros(shape=len(speakers))
+speakers_count_train = np.zeros(shape=len(speakers))
+speakers_count_test  = np.zeros(shape=len(speakers))
 
 for _, target in train_selector:
     for item in target:
