@@ -15,10 +15,10 @@ import plot
 selector = timit.FileSelector()
 selector = helpers.TargetType(selector, target_type='speaker')
 speakers = selector.labels
+selector = helpers.Filter(selector, min_count=10, min_size=300, nperseg=256, noverlap=128)
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)
-selector = helpers.Filter(selector, min_count=10)
 selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
 train_selector = helpers.Minibatch(selector.train)
