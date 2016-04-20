@@ -8,54 +8,59 @@ class Validation:
             If `stratified` is True the split will assure evenly splitted classes.
         """
         self._selector = selector
-
-        # Create idx splitting mapping
-        # 0 = Train
-        # 1 = Test
-        self._split_idx = list()
-
-        # TODO (Andreas): I'm pretty sure these for loops can be moved inside
-        # the train and test methods, since the selector order is deterministic.
-        if stratified:
-            # Count labels in each subset
-            in_test = collections.Counter()
-            in_train = collections.Counter()
-
-            # Divide dataset
-            for i, (input, target) in enumerate(self._selector):
-                if self._test_ratio(in_test[target], in_train[target]) < test_fraction:
-                    self._split_idx.append(1)
-                    in_test[target] += 1
-                else:
-                    self._split_idx.append(0)
-                    in_train[target] += 1
-        else:
-            # Count labels in each subset
-            in_test = 0
-            in_train = 0
-
-            # Divide dataset
-            for i, _ in enumerate(self._selector):
-                if self._test_ratio(in_test, in_train) < test_fraction:
-                    self._split_idx.append(1)
-                    in_test += 1
-                else:
-                    self._split_idx.append(0)
-                    in_train += 1
-
-    @staticmethod
-    def _test_ratio(in_test, in_train):
-        if in_test + in_train == 0: return 0
-        return in_test / (in_test + in_train)
+        self._test_fraction = test_fraction
+        self._stratified = stratified
 
     @property
     def train(self):
-        for i, (input, target) in enumerate(self._selector):
-            if self._split_idx[i] == 0:
+        counter = SeperationCounter(self._stratified)
+
+        for input, target in self._selector:
+            if counter.test_ratio(target) >= self._test_fraction:
+                counter.increment_train(target)
                 yield (input, target)
+            else:
+                counter.increment_test(target)
 
     @property
     def test(self):
-        for i, (input, target) in enumerate(self._selector):
-            if self._split_idx[i] == 1:
+        counter = SeperationCounter(self._stratified)
+
+        for input, target in self._selector:
+            if counter.test_ratio(target) < self._test_fraction:
+                counter.increment_test(target)
                 yield (input, target)
+            else:
+                counter.increment_train(target)
+
+class SeperationCounter:
+    def __init__(self, stratified):
+        self._stratified = stratified
+
+        if self._stratified:
+            # Count labels in each subset
+            self._in_test = collections.Counter()
+            self._in_train = collections.Counter()
+        else:
+            # Count labels in each subset
+            self._in_test = 0
+            self._in_train = 0
+
+    def test_ratio(self, target):
+        in_test = self._in_test[target] if self._stratified else self._in_test
+        in_train = self._in_train[target] if self._stratified else self._in_train
+
+        if in_test + in_train == 0: return 0
+        return in_test / (in_test + in_train)
+
+    def increment_train(self, target):
+        if self._stratified:
+            self._in_train[target] += 1
+        else:
+            self._in_train += 1
+
+    def increment_test(self, target):
+        if self._stratified:
+            self._in_test[target] += 1
+        else:
+            self._in_test += 1
