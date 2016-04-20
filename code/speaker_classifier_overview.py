@@ -6,7 +6,6 @@ import helpers
 
 # Create data selector object
 selector = timit.FileSelector(dialect=None)
-#selector = timit.FileSelector(dialect='dr1')
 selector = helpers.TargetType(selector, target_type='speaker')
 speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
@@ -56,10 +55,13 @@ speakers_count_test = np.delete(speakers_count_test, np.where(speakers_count_tes
 print('Number of speakers: %d' % (len(speakers)))
 print('Number of active speakers: %d' % (len(speakers_count)))
 print('Number of observations filtered: %d' % (np.sum(speakers_count)))
+
 print('min speaker count: %d' % (np.min(speakers_count)))
 print('min speaker count train: %d' % (np.min(speakers_count_train)))
 print('min speaker count test: %d' % (np.min(speakers_count_test)))
+
 print('max speaker count: %d' % (np.max(speakers_count)))
 print('max speaker count train: %d' % (np.max(speakers_count_train)))
 print('max speaker count test: %d' % (np.max(speakers_count_test)))
+
 print('mean speaker counts: %d' % (np.mean(speakers_count)))
