@@ -9,7 +9,12 @@ class Minibatch:
         self._input_type = input_type
         self._target_type = target_type
 
-        (input_data, target_data) = zip(*data_iterable)
+        input_data = []
+        target_data = []
+        for input, target in data_iterable:
+            input_data.append(input)
+            target_data.append(target)
+
         self._input_cache = np.asarray(input_data, dtype=self._input_type)
         self._target_cache = np.asarray(target_data, dtype=self._target_type)
 
