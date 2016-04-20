@@ -25,39 +25,6 @@ class Minibatch:
             Y.append(y)
         return np.array(X), np.array(Y).squeeze()
 
-class MinibatchLazy:
-    def __init__(self, data_iterable, batchsize, input_type, target_type):
-        self._data_iterator = iter(data_iterable)
-        self._batchsize = batchsize
-        self._input_type = input_type
-        self._target_type = target_type
-        self._stop = False
-
-    def __next__(self):
-        if (self._stop): raise StopIteration
-
-        # Collect `batchsize` items and set _stop if there are no more items
-        input_batch = []
-        target_batch = []
-        while len(input_batch) < self._batchsize:
-            try:
-                (input, target) = next(self._data_iterator)
-                input_batch.append(input)
-                target_batch.append(target)
-            except StopIteration:
-                self._stop = True
-                break
-
-        # If there are no items just stop immediately
-        if (len(input_batch) == 0): raise StopIteration
-
-        # Output `batchsize` items or whatever is remaining
-        return (
-            np.asarray(input_batch, dtype=self._input_type),
-            np.asarray(target_batch, dtype=self._target_type)
-        )
-
-
 class MinibatchCache:
     def __init__(self, input_cache, target_cache, batchsize):
         self._input_cache = input_cache
