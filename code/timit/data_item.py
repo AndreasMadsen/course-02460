@@ -26,6 +26,7 @@ class DataItem:
         self.txt = filename + ".TXT"
         self.wrd = filename + ".WRD"
 
+        self._signal_shape = None
         self.rate = 16000  # This is the same for all files in timit
 
     def __str__(self):
@@ -39,8 +40,34 @@ class DataItem:
             - texttype: {texttype}
         """.format(**vars(self)))
 
+    @property
+    def signal_shape(self):
+        if self._signal_shape is None:
+            (_, signal) = scipy.io.wavfile.read(self.wav, mmap=True)
+            self._signal_shape = signal.shape
+        return self._signal_shape
+
+    def spectrogram_shape(self, nperseg=256, noverlap=128):
+        # https://github.com/scipy/scipy/blob/master/scipy/signal/spectral.py#L846
+        if nperseg % 2:
+            num_freqs = (nperseg + 1) // 2
+        else:
+            num_freqs = nperseg // 2 + 1
+
+        # https://github.com/scipy/scipy/blob/master/scipy/signal/spectral.py#L878
+        t = np.arange(nperseg / 2,
+                      self.signal_shape[-1] - nperseg / 2 + 1,
+                      nperseg - noverlap)
+        num_times = t.shape[0]
+
+        return (num_freqs, num_times)
+
+    def size(self, *args, **kwargs):
+        return self.spectrogram_shape(*args, **kwargs)[1]
+
     def signal(self, normalize_signal=False):
         (_, signal) = scipy.io.wavfile.read(self.wav)
+        self._signal_shape = signal.shape
 
         # There is an issue in numpy where np.linalg.norm can overflow for
         # 16bit ints. Thus the signal is converted to float32 if normalized
