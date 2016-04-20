@@ -9,12 +9,10 @@ import matplotlib.pyplot as plt
 import timit
 import network
 import helpers
-
-
-display_active = "DISPLAY" in os.environ and len(os.environ["DISPLAY"]) > 0
+import plot
 
 # Create data selector object
-selector = timit.FileSelector(dialect=None)
+selector = timit.FileSelector()
 selector = helpers.TargetType(selector, target_type='speaker')
 speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
@@ -32,19 +30,7 @@ cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers.k
 cnn.compile()
 
 epochs = 100
-
-# Setup data containers and matplotlib
-train_loss_arr = np.zeros(epochs)
-test_loss_arr = np.zeros(epochs)
-epoch_arr = np.arange(1, epochs + 1)
-
-if display_active:
-    fig, ax = plt.subplots()
-    train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
-    test_points, = ax.plot(epoch_arr, test_loss_arr, label='test')
-    plt.ylim(0, 1)
-    plt.legend()
-    plt.ion()
+loss_plot = plot.LiveLoss(epochs)
 
 # Train network
 max_error = 1.0
@@ -66,15 +52,9 @@ for epoch in range(epochs):
     print("Epoch %d: Train Loss %g, Test Loss %g" % (
           epoch + 1, train_loss / train_batches, test_loss / test_batches))
 
-    train_loss_arr[epoch] = train_loss / train_batches
-    test_loss_arr[epoch] = test_loss / test_batches
-
-    if display_active:
-        train_points.set_data(epoch_arr, train_loss_arr)
-        test_points.set_data(epoch_arr, test_loss_arr)
-        max_error = max(max_error, np.max(np.concatenate((train_loss_arr.ravel(), test_loss_arr.ravel()))))
-        ax.set_ylim([0, max_error])
-        plt.pause(0.1)
+    loss_plot.set_loss(epoch,
+                       train_loss / train_batches,
+                       test_loss / test_batches)
 
 missclassifications = 0
 observations = 0
@@ -85,6 +65,4 @@ for (test_input, test_target) in test_selector:
 
 print('missrate: %f' % (missclassifications / observations))
 
-if display_active:
-    plt.ioff()
-    plt.show()
+loss_plot.finish()
