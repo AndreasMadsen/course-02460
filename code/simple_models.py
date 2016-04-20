@@ -12,11 +12,11 @@ def main():
     # File selectors
     train_selector = helpers.MeanFrequenciesOfSpectrogram(
         timit.FileSelector(usage='train', dialect=None))
-    train_iterable = helpers.Minibatch(train_selector, cache=True)
+    train_iterable = helpers.Minibatch(train_selector)
 
     test_selector = helpers.MeanFrequenciesOfSpectrogram(
         timit.FileSelector(usage='test', dialect=None))
-    test_iterable = helpers.Minibatch(test_selector, cache=True)
+    test_iterable = helpers.Minibatch(test_selector)
 
     X_train, Y_train = train_iterable.data
     X_test, Y_test = test_iterable.data

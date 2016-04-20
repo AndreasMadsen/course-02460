@@ -9,26 +9,26 @@ import matplotlib.pyplot as plt
 import timit
 import network
 import helpers
-import platform
-def display_active():
-    if platform.system()=="Windows":
-        return True
-    else:
-        return len(os.environ["DISPLAY"]) > 0
 
-def create_selector(usage):
-    selector = timit.FileSelector(usage=usage, dialect=None)
-    selector = helpers.TargetType(selector, target_type='sex')
-    selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
-    selector = helpers.Truncate(selector, truncate=300, axis=2)
-    selector = helpers.Normalize(selector)
-    selector = helpers.Minibatch(selector)
-    return selector
 
-test_selector = create_selector('test')
-train_selector = create_selector('train')
+display_active = "DISPLAY" in os.environ and len(os.environ["DISPLAY"]) > 0
 
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+# Create data selector object
+selector = timit.FileSelector(dialect=None)
+selector = helpers.TargetType(selector, target_type='speaker')
+speakers = selector.labels
+selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
+selector = helpers.Truncate(selector, truncate=300, axis=2)
+selector = helpers.Normalize(selector)
+selector = helpers.Filter(selector, min_count=10)
+selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
+
+train_selector = helpers.Minibatch(selector.train)
+test_selector  = helpers.Minibatch(selector.test)
+
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers.keys()),
+                          verbose=True, learning_rate=0.001,
+                          regularization=True, dropout=True)
 cnn.compile()
 
 epochs = 100
@@ -38,7 +38,7 @@ train_loss_arr = np.zeros(epochs)
 test_loss_arr = np.zeros(epochs)
 epoch_arr = np.arange(1, epochs + 1)
 
-if display_active():
+if display_active:
     fig, ax = plt.subplots()
     train_points, = ax.plot(epoch_arr, train_loss_arr, label='train')
     test_points, = ax.plot(epoch_arr, test_loss_arr, label='test')
@@ -46,10 +46,8 @@ if display_active():
     plt.legend()
     plt.ion()
 
-for test_data in test_selector:
-    print(np.mean(cnn.predict(test_data[0]), axis=0))
-
 # Train network
+max_error = 1.0
 for epoch in range(epochs):
     train_loss = 0
     train_batches = 0
@@ -71,9 +69,11 @@ for epoch in range(epochs):
     train_loss_arr[epoch] = train_loss / train_batches
     test_loss_arr[epoch] = test_loss / test_batches
 
-    if display_active():
+    if display_active:
         train_points.set_data(epoch_arr, train_loss_arr)
         test_points.set_data(epoch_arr, test_loss_arr)
+        max_error = max(max_error, np.max(np.concatenate((train_loss_arr.ravel(), test_loss_arr.ravel()))))
+        ax.set_ylim([0, max_error])
         plt.pause(0.1)
 
 missclassifications = 0
@@ -85,6 +85,6 @@ for (test_input, test_target) in test_selector:
 
 print('missrate: %f' % (missclassifications / observations))
 
-if display_active():
+if display_active:
     plt.ioff()
     plt.show()

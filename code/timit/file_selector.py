@@ -36,7 +36,9 @@ class FileSelector:
         self.texttype = texttype_all if (texttype is None) else _tolist(texttype)
 
         self._files = list(self._file_list_generator())
-        self._shuffle = shuffle
+
+        if (shuffle):
+            random.shuffle(self._files)
 
     def _file_list_generator(self):
         for usage in self.usage:
@@ -79,10 +81,7 @@ class FileSelector:
     def __iter__(self):
         # TODO(Andreas): consider implementing this as an actual iterator
         # and not just returning a list.
-        if (self._shuffle):
-            return iter(random.sample(self._files, len(self._files)))
-        else:
-            return iter(self._files)
+        return iter(self._files)
 
 
 if __name__ == '__main__':
