@@ -24,7 +24,7 @@ selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
-cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers.keys()),
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers),
                           verbose=True, learning_rate=0.001,
                           regularization=True, dropout=True)
 cnn.compile()
