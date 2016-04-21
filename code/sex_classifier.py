@@ -9,6 +9,7 @@ import timit
 import network
 import helpers
 import plot
+import early_stopping
 
 def create_selector(usage):
     selector = timit.FileSelector(usage=usage)#,dialect='dr1')
@@ -22,8 +23,8 @@ def create_selector(usage):
 test_selector = create_selector('test')
 train_selector = create_selector('train')
 
-# cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2,
-#                           regularization=1e-1, verbose=True)
+#cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2,
+#                          regularization=1e-1, verbose=True)
 # cnn = network.Logistic(input_shape=(1, 129, 300), output_units=len(speakers),
 #                        verbose=True, learning_rate=0.01,
 #                        regularization=0, dropout=False)
@@ -32,21 +33,10 @@ cnn.compile()
 
 epochs = 500
 
-loss_array = np.zeros((epochs, 2))
-
-# implement early stopping as in http://page.mi.fu-berlin.de/prechelt/Biblio/stop_tricks1997.pdf
-# using the second definition of a stopping criteria from the paper
-# NOTE: we are not using classical early stopping since we run the criteria on the training set
-
-early_stop = 0.5
-strip_length = 10
+stoppage = early_stopping.PrecheltStopping(verbose=True)#verbose=True, alpha=1.5,interval_length=10
 
 loss_plot = plot.LiveLoss(epochs)
 
-print("Training with early stopping. ",end="")
-print("Criterion is [generalization loss] / [improvement factor] > alpha ")
-print("\talpha = {0}".format(early_stop))
-print("\timprovement factor length = {0}".format(strip_length))
 # Train network
 for epoch in range(epochs):
     train_loss = 0
@@ -63,33 +53,19 @@ for epoch in range(epochs):
         test_loss += cnn.loss(*test_data)
         test_batches += 1
 
-    loss_array[epoch, 0] = train_loss / train_batches
-    loss_array[epoch, 1] = test_loss  / test_batches
+    train_loss_current_epoch = train_loss / train_batches
+    test_loss_current_epoch = test_loss  / test_batches
 
     print("Epoch %d: Train Loss %g, Test Loss %g" % (
-          epoch + 1, loss_array[epoch, 0],loss_array[epoch, 1]))
+          epoch + 1, train_loss_current_epoch,
+          test_loss_current_epoch))
 
     loss_plot.set_loss(epoch,
-                       loss_array[epoch, 0],
-                       loss_array[epoch, 1])
-    if epoch == 0:
-        lowest_loss_val = 1e10
-    else:
-        lowest_loss_val = min(loss_array[:epoch, 0])
-
-    generalization_loss = loss_array[epoch, 0] / lowest_loss_val - 1
-
-    if epoch < strip_length:
-        improvement_factor = 1
-    else:
-        strip = loss_array[(epoch - strip_length):epoch, 0]
-        improvement_factor = np.mean(strip) / np.min(strip) - 1
-
-    criterion = generalization_loss / improvement_factor
-    #print("gen_loss = {0:.3f}".format(generalization_loss))
-    #print("improvement_factor = {0:.3f}".format(improvement_factor))
-    if criterion > early_stop:
-        print("Stopping early because gl / if  = {0:.3f}>{1:.3f} ".format(criterion, early_stop))
+                       train_loss_current_epoch,
+                       test_loss_current_epoch)
+    
+    if stoppage.is_converged(test_loss_current_epoch):
+        print("Stopping early")
         break
 
 missclassifications = 0
