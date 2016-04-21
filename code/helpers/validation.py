@@ -1,5 +1,5 @@
 
-import numpy as np
+import collections
 
 class Validation:
     def __init__(self, selector, test_fraction=0.33, stratified=False, **kwargs):
@@ -7,67 +7,60 @@ class Validation:
             Splits selector into train and test data.
             If `stratified` is True the split will assure evenly splitted classes.
         """
-        self.selector = selector
-
-        # Load all targets (labels)
-        labels = [target for (_, target) in self.selector]
-
-        # Create shuffled index array
-        n = len(labels)
-        self.n_split = int(n * test_fraction)
-
-        # Create idx splitting mapping
-        # 0 = Train
-        # 1 = Test
-        split_idx = {}
-
-        if stratified:
-            # Make label counter for train and test
-            labels_unique = sorted(list(set(labels)))
-            label_count_train = {label: 0 for label in labels_unique}
-            label_count_test  = {label: 0 for label in labels_unique}
-
-            for i in range(0, n):
-                label = labels[i]
-
-                # Make sure atleast 1 of each label is present in train and test
-                if label_count_train[label] == 0:
-                    split_idx[i] = 0
-                    label_count_train[label] += 1
-                    continue
-
-                if label_count_test[label] == 0:
-                    split_idx[i] = 1
-                    label_count_test[label] += 1
-                    continue
-
-                # If one label already is present in train and test, add label
-                # according to the fraction of labels in test.
-                label_test_fraction = label_count_test[label] / (label_count_train[label] + label_count_test[label])
-
-                if label_test_fraction > test_fraction:
-                    split_idx[i] = 0
-                    label_count_train[label] += 1
-                else:
-                    split_idx[i] = 1
-                    label_count_test[label] += 1
-
-        else:
-            # Simple split
-            for i in range(0, n):
-                split_idx[i] = int(i < self.n_split)
-
-
-        self.split_idx = split_idx
+        self._selector = selector
+        self._test_fraction = test_fraction
+        self._stratified = stratified
 
     @property
     def train(self):
-        for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[i] == 0):
-                yield input, target
+        counter = SeperationCounter(self._stratified)
+
+        for input, target in self._selector:
+            if counter.test_ratio(target) >= self._test_fraction:
+                counter.increment_train(target)
+                yield (input, target)
+            else:
+                counter.increment_test(target)
 
     @property
     def test(self):
-        for i, (input, target) in enumerate(self.selector):
-            if (self.split_idx[i] == 1):
-                yield input, target
+        counter = SeperationCounter(self._stratified)
+
+        for input, target in self._selector:
+            if counter.test_ratio(target) < self._test_fraction:
+                counter.increment_test(target)
+                yield (input, target)
+            else:
+                counter.increment_train(target)
+
+class SeperationCounter:
+    def __init__(self, stratified):
+        self._stratified = stratified
+
+        if self._stratified:
+            # Count labels in each subset
+            self._in_test = collections.Counter()
+            self._in_train = collections.Counter()
+        else:
+            # Count labels in each subset
+            self._in_test = 0
+            self._in_train = 0
+
+    def test_ratio(self, target):
+        in_test = self._in_test[target] if self._stratified else self._in_test
+        in_train = self._in_train[target] if self._stratified else self._in_train
+
+        if in_test + in_train == 0: return 0
+        return in_test / (in_test + in_train)
+
+    def increment_train(self, target):
+        if self._stratified:
+            self._in_train[target] += 1
+        else:
+            self._in_train += 1
+
+    def increment_test(self, target):
+        if self._stratified:
+            self._in_test[target] += 1
+        else:
+            self._in_test += 1
