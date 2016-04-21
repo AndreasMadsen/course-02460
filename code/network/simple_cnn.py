@@ -54,17 +54,7 @@ class SimpleCNN(NetworkAbstraction):
 
     def _loss_function(self, prediction, network):
         loss = lasagne.objectives.categorical_crossentropy(prediction, self.target_var)
-        loss = loss.mean()
-
-        # Setup regularization
-        if (self._regularization > 0):
-            reg2_term = lasagne.regularization.regularize_network_params(
-                network,
-                lasagne.regularization.l2
-            )
-            loss += reg2_term * self._regularization
-
-        return loss
+        return loss.mean()
 
     def _update_function(self, loss, parameters):
         update = lasagne.updates.nesterov_momentum(
