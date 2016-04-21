@@ -11,7 +11,7 @@ import helpers
 import plot
 
 def create_selector(usage):
-    selector = timit.FileSelector(usage=usage,dialect='dr1')
+    selector = timit.FileSelector(usage=usage)#,dialect='dr1')
     selector = helpers.TargetType(selector, target_type='sex')
     selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
@@ -31,7 +31,9 @@ epochs = 500
 loss_array =  np.zeros((epochs, 2))
 
 # implement early stopping as in http://page.mi.fu-berlin.de/prechelt/Biblio/stop_tricks1997.pdf
-# using the second definition of a stopping criteria
+# using the second definition of a stopping criteria from the paper
+# NOTE: we are not using classical early stopping since we run the criteria on the training set
+
 early_stop = 0.5
 strip_length = 10
 
@@ -69,14 +71,14 @@ for epoch in range(epochs):
     if epoch == 0:
         lowest_loss_val = 1e10
     else:
-        lowest_loss_val = min(loss_array[:epoch, 1])
+        lowest_loss_val = min(loss_array[:epoch, 0])
     
-    generalization_loss = loss_array[epoch, 1] / lowest_loss_val - 1
+    generalization_loss = loss_array[epoch, 0] / lowest_loss_val - 1
     
     if epoch < strip_length:
         improvement_factor = 1
     else:
-        strip = loss_array[(epoch - strip_length):epoch, 1]
+        strip = loss_array[(epoch - strip_length):epoch, 0]
         improvement_factor = np.mean(strip) / np.min(strip) - 1
     
     criterion = generalization_loss / improvement_factor 
