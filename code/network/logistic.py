@@ -4,7 +4,7 @@ import theano.tensor as T
 
 from network.abstraction import NetworkAbstraction
 
-class SimpleCNN(NetworkAbstraction):
+class Logistic(NetworkAbstraction):
     def __init__(self, *args,
                  learning_rate=0.001, momentum=0.9, **kwargs):
         super().__init__(
@@ -23,25 +23,8 @@ class SimpleCNN(NetworkAbstraction):
 
     def _build_network(self):
         network = lasagne.layers.InputLayer(
-            shape=(None, ) + self.input_shape,
-            input_var=self.input_var
-        )
-
-        network = lasagne.layers.Conv2DLayer(
-            incoming=network,
-            num_filters=16, filter_size=(self.input_shape[1], 8),
-            nonlinearity=lasagne.nonlinearities.sigmoid
-        )
-
-        network = lasagne.layers.MaxPool2DLayer(
-            incoming=network,
-            pool_size=(1, 4)
-        )
-
-        network = lasagne.layers.DenseLayer(
-            incoming=network,
-            num_units=32,
-            nonlinearity=lasagne.nonlinearities.sigmoid
+            shape=(None, ) + self.input_shape[0:2],
+            input_var=self.input_var.mean(axis=3)
         )
 
         network = lasagne.layers.DenseLayer(
