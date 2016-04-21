@@ -26,7 +26,7 @@ test_selector  = helpers.Minibatch(selector.test)
 
 cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers),
                           verbose=True, learning_rate=0.001,
-                          regularization=True, dropout=True)
+                          regularization=1e-1, dropout=True)
 cnn.compile()
 
 epochs = 100

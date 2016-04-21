@@ -70,11 +70,17 @@ class DielemanCNN(NetworkAbstraction):
 
         return network
 
-    def _loss_function(self, prediction):
+    def _loss_function(self, prediction, network):
         loss = lasagne.objectives.categorical_crossentropy(prediction, self.target_var)
         loss = loss.mean()
-        if (self._regularization):
-            loss += self._reg2_term * 1e-1
+
+        # Setup regularization
+        if (self._regularization > 0):
+            reg2_term = lasagne.regularization.regularize_network_params(
+                network,
+                lasagne.regularization.l2
+            )
+            loss += reg2_term * self._regularization
         return loss
 
     def _update_function(self, loss, parameters):

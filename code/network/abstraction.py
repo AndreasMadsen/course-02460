@@ -4,7 +4,7 @@ import theano
 
 class NetworkAbstraction:
     def __init__(self, input_shape, output_units, input_var, target_var,
-                 regularization=False, dropout=False, *args, verbose=False, **kwargs):
+                 regularization=0, dropout=False, *args, verbose=False, **kwargs):
         self.input_shape = input_shape
         self.output_units = output_units
 
@@ -36,16 +36,9 @@ class NetworkAbstraction:
         network = self._build_network()
         parameters = lasagne.layers.get_all_params(network, trainable=True)
 
-        # Setup regularization
-        if (self._regularization):
-            self._reg2_term = lasagne.regularization.regularize_network_params(
-                network,
-                lasagne.regularization.l2
-            )
-
         # Build train function
         prediction_train = lasagne.layers.get_output(network)
-        loss_train = self._loss_function(prediction_train)
+        loss_train = self._loss_function(prediction_train, network)
         update = self._update_function(loss_train, parameters)
 
         # Compile train function
@@ -63,7 +56,7 @@ class NetworkAbstraction:
         self._print('Predict function compiled')
 
         # Build loss function
-        loss_test = self._loss_function(prediction_test)
+        loss_test = self._loss_function(prediction_test, network)
 
         # Compile loss function
         self._loss_fn = theano.function(
