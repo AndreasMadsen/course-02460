@@ -8,7 +8,7 @@ class WeightDecay(RegualizerAbstraction):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def _regualizer(self, prediction, network):
+    def _regualizer(self, network, **kwargs):
         L2 = lasagne.regularization.regularize_network_params(
             network,
             lasagne.regularization.l2

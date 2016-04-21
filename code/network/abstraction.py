@@ -35,10 +35,15 @@ class NetworkAbstraction:
         self._regualizers.append(regualizer)
 
     def _build_loss_function(self, prediction, network):
-        loss = self._loss_function(prediction, network)
+        loss = self._loss_function(prediction)
 
         for r in self._regualizers:
-            loss += r.regualizer(prediction, network)
+            loss += r.regualizer(
+                prediction=prediction,
+                network=network,
+                input_var=self.input_var,
+                target_var=self.target_var
+            )
 
         return loss
 
