@@ -24,11 +24,7 @@ class Minibatch:
 
     @property
     def data(self):
-        X, Y = [], []
-        for x, y in self._data_iterable:
-            X.append(x)
-            Y.append(y)
-        return np.array(X), np.array(Y).squeeze()
+        return (self._input_cache, self._target_cache)
 
 class MinibatchCache:
     def __init__(self, input_cache, target_cache, batchsize):
