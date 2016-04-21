@@ -6,7 +6,7 @@ from network.abstraction import NetworkAbstraction
 
 class DielemanCNN(NetworkAbstraction):
     def __init__(self, *args,
-                 learning_rate=0.001, momentum=0.9, **kwargs):
+                 learning_rate=0.001, momentum=0.9, dropout=False, **kwargs):
         super().__init__(
             input_var=T.ftensor4('input'),
             target_var=T.ivector('target'),
@@ -20,6 +20,8 @@ class DielemanCNN(NetworkAbstraction):
             'learning_rate': learning_rate,
             'momentum': momentum
         }
+
+        self._dropout = dropout
 
     def _build_network(self):
         network = lasagne.layers.InputLayer(

@@ -4,7 +4,7 @@ import theano
 
 class NetworkAbstraction:
     def __init__(self, input_shape, output_units, input_var, target_var,
-                 dropout=False, *args, verbose=False, **kwargs):
+                 *args, verbose=False, **kwargs):
         self.input_shape = input_shape
         self.output_units = output_units
 
@@ -15,7 +15,6 @@ class NetworkAbstraction:
         self._compiled = False
 
         self._regualizers = []
-        self._dropout = dropout
 
         self._print('Network initalized')
 
