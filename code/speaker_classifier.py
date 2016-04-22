@@ -10,6 +10,7 @@ import timit
 import network
 import helpers
 import plot
+import early_stopping
 
 # Create data selector object
 selector = timit.FileSelector()
@@ -32,8 +33,10 @@ cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers),
                           regularization=1e-1, dropout=True)
 cnn.compile()
 
-epochs = 100
+epochs = 500
 loss_plot = plot.LiveLoss(epochs)
+
+stoppage = early_stopping.PrecheltStopping(verbose=True)
 
 # Train network
 max_error = 1.0
@@ -58,6 +61,10 @@ for epoch in range(epochs):
     loss_plot.set_loss(epoch,
                        train_loss / train_batches,
                        test_loss / test_batches)
+
+    if stoppage.is_converged(test_loss / test_batches):
+        print("Stopping early")
+        break
 
 missclassifications = 0
 observations = 0
