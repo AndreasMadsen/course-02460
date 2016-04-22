@@ -14,7 +14,7 @@ class NetworkAbstraction:
         self._verbose = verbose
         self._compiled = False
 
-        self._regualizers = []
+        self._regularizers = []
 
         self._print('Network initalized')
 
@@ -30,15 +30,15 @@ class NetworkAbstraction:
     def _update_function(self):
         raise NotImplementedError
 
-    def add_regualizer(self, regualizer):
-        self._print(str(regualizer))
-        self._regualizers.append(regualizer)
+    def add_regularizer(self, regularizer):
+        self._print(str(regularizer))
+        self._regularizers.append(regularizer)
 
     def _build_loss_function(self, prediction, network):
         loss = self._loss_function(prediction)
 
-        for r in self._regualizers:
-            loss += r.regualizer(
+        for r in self._regularizers:
+            loss += r.regularizer(
                 prediction=prediction,
                 network=network,
                 input_var=self.input_var,
