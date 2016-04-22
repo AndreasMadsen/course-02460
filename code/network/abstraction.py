@@ -4,7 +4,7 @@ import theano
 
 class NetworkAbstraction:
     def __init__(self, input_shape, output_units, input_var, target_var,
-                 regularization=0, dropout=False, *args, verbose=False, **kwargs):
+                 *args, verbose=False, **kwargs):
         self.input_shape = input_shape
         self.output_units = output_units
 
@@ -14,8 +14,7 @@ class NetworkAbstraction:
         self._verbose = verbose
         self._compiled = False
 
-        self._regularization = regularization
-        self._dropout = dropout
+        self._regularizers = []
 
         self._print('Network initalized')
 
@@ -31,6 +30,23 @@ class NetworkAbstraction:
     def _update_function(self):
         raise NotImplementedError
 
+    def add_regularizer(self, regularizer):
+        self._print(str(regularizer))
+        self._regularizers.append(regularizer)
+
+    def _build_loss_function(self, prediction, network):
+        loss = self._loss_function(prediction)
+
+        for r in self._regularizers:
+            loss += r.regularizer(
+                prediction=prediction,
+                network=network,
+                input_var=self.input_var,
+                target_var=self.target_var
+            )
+
+        return loss
+
     def compile(self, all_layers=False):
         self._print('Compiling network ...')
         network = self._build_network()
@@ -38,7 +54,7 @@ class NetworkAbstraction:
 
         # Build train function
         prediction_train = lasagne.layers.get_output(network)
-        loss_train = self._loss_function(prediction_train, network)
+        loss_train = self._build_loss_function(prediction_train, network)
         update = self._update_function(loss_train, parameters)
 
         # Compile train function
@@ -56,7 +72,7 @@ class NetworkAbstraction:
         self._print('Predict function compiled')
 
         # Build loss function
-        loss_test = self._loss_function(prediction_test, network)
+        loss_test = self._build_loss_function(prediction_test, network)
 
         # Compile loss function
         self._loss_fn = theano.function(

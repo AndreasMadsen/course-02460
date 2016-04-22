@@ -23,11 +23,12 @@ def create_selector(usage):
 test_selector = create_selector('test')
 train_selector = create_selector('train')
 
-#cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2,
-#                          regularization=1e-1, verbose=True)
-# cnn = network.Logistic(input_shape=(1, 129, 300), output_units=len(speakers),
-#                        verbose=True, learning_rate=0.01,
-#                        regularization=0, dropout=False)
+# cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2,
+#                           verbose=True)
+# cnn.add_regularizer(network.regularizer.WeightDecay(1e-1))
+
+# cnn = network.Logistic(input_shape=(1, 129, 300), output_units=2,
+#                        verbose=True, learning_rate=0.01)
 cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
 cnn.compile()
 
@@ -63,7 +64,7 @@ for epoch in range(epochs):
     loss_plot.set_loss(epoch,
                        train_loss_current_epoch,
                        test_loss_current_epoch)
-    
+
     if stoppage.is_converged(test_loss_current_epoch):
         print("Stopping early")
         break

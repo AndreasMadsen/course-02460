@@ -6,7 +6,7 @@ from network.abstraction import NetworkAbstraction
 
 class DielemanCNN(NetworkAbstraction):
     def __init__(self, *args,
-                 learning_rate=0.001, momentum=0.9, **kwargs):
+                 learning_rate=0.001, momentum=0.9, dropout=False, **kwargs):
         super().__init__(
             input_var=T.ftensor4('input'),
             target_var=T.ivector('target'),
@@ -20,6 +20,8 @@ class DielemanCNN(NetworkAbstraction):
             'learning_rate': learning_rate,
             'momentum': momentum
         }
+
+        self._dropout = dropout
 
     def _build_network(self):
         network = lasagne.layers.InputLayer(
@@ -70,18 +72,9 @@ class DielemanCNN(NetworkAbstraction):
 
         return network
 
-    def _loss_function(self, prediction, network):
+    def _loss_function(self, prediction):
         loss = lasagne.objectives.categorical_crossentropy(prediction, self.target_var)
-        loss = loss.mean()
-
-        # Setup regularization
-        if (self._regularization > 0):
-            reg2_term = lasagne.regularization.regularize_network_params(
-                network,
-                lasagne.regularization.l2
-            )
-            loss += reg2_term * self._regularization
-        return loss
+        return loss.mean()
 
     def _update_function(self, loss, parameters):
         update = lasagne.updates.nesterov_momentum(
