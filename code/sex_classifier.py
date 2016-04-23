@@ -29,7 +29,11 @@ train_selector = create_selector('train')
 
 # cnn = network.Logistic(input_shape=(1, 129, 300), output_units=2,
 #                        verbose=True, learning_rate=0.01)
-cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+
+# cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+
+cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
+cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
 cnn.compile()
 
 epochs = 500
