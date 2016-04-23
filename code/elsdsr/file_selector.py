@@ -65,7 +65,7 @@ class FileSelector:
                 # Check that speaker is allowed
                 if speaker not in self.speakers: continue
 
-                yield DataItem(usage, sex, speaker, file_path)
+                yield DataItem(usage, sex.lower(), speaker, file_path)
 
     def __len__(self):
         return len(self._files)
