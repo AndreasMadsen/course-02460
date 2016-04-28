@@ -13,7 +13,7 @@ import early_stopping
 
 # Create data selector object
 selector = elsdsr.FileSelector(usage=None, sex=None, speaker=None)
-selector = helpers.TargetType(selector, target_type='sex')
+selector = helpers.TargetType(selector, target='sex')
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Splitter(selector, split_size=300, axis=2)
 #selector = helpers.Truncate(selector, truncate=300, axis=2)

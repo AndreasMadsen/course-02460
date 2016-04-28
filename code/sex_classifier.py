@@ -13,7 +13,7 @@ import early_stopping
 
 def create_selector(usage):
     selector = timit.FileSelector(usage=usage)#,dialect='dr1')
-    selector = helpers.TargetType(selector, target_type='sex')
+    selector = helpers.TargetType(selector, target='sex')
     selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
     selector = helpers.Normalize(selector)
@@ -36,7 +36,7 @@ cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=Tru
 cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
 cnn.compile()
 
-epochs = 500
+epochs = 200
 
 stoppage = early_stopping.PrecheltStopping(verbose=True)#verbose=True, alpha=1.5,interval_length=10
 

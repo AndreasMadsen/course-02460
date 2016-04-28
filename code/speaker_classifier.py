@@ -14,9 +14,9 @@ import early_stopping
 
 # Create data selector object
 selector = timit.FileSelector()
-selector = helpers.TargetType(selector, target_type='speaker')
+selector = helpers.Filter(selector, target='speaker', min_count=10, min_size=300, nperseg=256, noverlap=128)
+selector = helpers.TargetType(selector, target='speaker')
 speakers = selector.labels
-selector = helpers.Filter(selector, min_count=10, min_size=300, nperseg=256, noverlap=128)
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Truncate(selector, truncate=300, axis=2)
 selector = helpers.Normalize(selector)

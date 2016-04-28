@@ -14,7 +14,7 @@ cnn.compile(all_layers=True)
 
 def create_selector(usage):
     selector = timit.FileSelector(usage=usage, dialect='dr1')
-    selector = helpers.TargetType(selector, target_type='sex')
+    selector = helpers.TargetType(selector, target='sex')
     selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
     selector = helpers.Truncate(selector, truncate=300, axis=2)
     selector = helpers.Normalize(selector)
