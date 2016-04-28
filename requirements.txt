@@ -5,3 +5,4 @@ git+git://github.com/Theano/Theano.git
 lasagne==0.1
 sklearn
 matplotlib==1.5.1
+git+git://github.com/jameslyons/python_speech_features.git
