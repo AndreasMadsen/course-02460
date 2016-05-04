@@ -22,8 +22,8 @@ class ScaleInvariant(RegularizerAbstraction):
             p_class_t = p[i, t[i]]
 
             return T.dot(
-                T.flatten(T.grad(p_class_t, x)[i, :, :, :]),
-                T.flatten(x[i, :, :, :])
+                T.flatten(T.grad(p_class_t, x)[i]),
+                T.flatten(x[i])
             )
 
         jacobi_dot_x, _ = theano.scan(
