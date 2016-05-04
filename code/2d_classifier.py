@@ -11,44 +11,46 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 import network
 
-nn_simple = network.ClassifierDNN(input_shape=(2, ), output_units=2, verbose=True)
-nn_simple.compile()
+def build_classifiers():
+    nn_simple = network.ClassifierDNN(input_shape=(2, ), output_units=2)
+    nn_simple.compile()
 
-nn_l2 = network.ClassifierDNN(input_shape=(2, ), output_units=2, verbose=True)
-nn_l2.add_regularizer(network.regularizer.WeightDecay(1e-1))
-nn_l2.compile()
+    nn_l2 = network.ClassifierDNN(input_shape=(2, ), output_units=2)
+    nn_l2.add_regularizer(network.regularizer.WeightDecay(1e-1))
+    nn_l2.compile()
 
-nn_si = network.ClassifierDNN(input_shape=(2, ), output_units=2, verbose=True)
-nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
-nn_si.compile()
+    nn_si = network.ClassifierDNN(input_shape=(2, ), output_units=2)
+    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
+    nn_si.compile()
+
+    names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant"]
+    classifiers = [
+        RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+        LinearDiscriminantAnalysis(),
+        nn_simple, nn_l2, nn_si
+    ]
+    return (names, classifiers)
+
+def build_datasets():
+    X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
+    X += 2 * np.random.uniform(size=X.shape)
+    linearly_separable = (X, y)
+
+    return [make_moons(noise=0.3),
+            make_circles(noise=0.2, factor=0.5),
+            linearly_separable]
 
 #
 # From http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html
 #
 h = .02  # step size in the mesh
-
-names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant"]
-classifiers = [
-    RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-    LinearDiscriminantAnalysis(),
-    nn_simple, nn_l2, nn_si
-]
-
-X, y = make_classification(n_features=2, n_redundant=0, n_informative=2,
-                           random_state=1, n_clusters_per_class=1)
-rng = np.random.RandomState(2)
-X += 2 * rng.uniform(size=X.shape)
-linearly_separable = (X, y)
-
-datasets = [make_moons(noise=0.3, random_state=0),
-            make_circles(noise=0.2, factor=0.5, random_state=1),
-            linearly_separable
-            ]
+n_datasets = 3
+n_classifiers = 5
 
 figure = plt.figure(figsize=(27, 9))
 i = 1
 # iterate over datasets
-for ds in datasets:
+for ds in build_datasets():
     # preprocess dataset, split into training and test part
     X, y = ds
     X = StandardScaler().fit_transform(X)
@@ -62,7 +64,7 @@ for ds in datasets:
     # just plot the dataset first
     cm = plt.cm.RdBu
     cm_bright = ListedColormap(['#FF0000', '#0000FF'])
-    ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
+    ax = plt.subplot(n_datasets, n_classifiers + 1, i)
     # Plot the training points
     ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
     # and testing points
@@ -74,8 +76,8 @@ for ds in datasets:
     i += 1
 
     # iterate over classifiers
-    for name, clf in zip(names, classifiers):
-        ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
+    for name, clf in zip(*build_classifiers()):
+        ax = plt.subplot(n_datasets, n_classifiers + 1, i)
         clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
 
