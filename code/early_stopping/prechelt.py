@@ -2,11 +2,11 @@ import numpy as np
 from early_stopping.abstraction import StoppingAbstraction
 
 class PrecheltStopping(StoppingAbstraction):
-    """ Implements a variation on  the second method described in 
+    """ Implements a variation on  the second method described in
     http://page.mi.fu-berlin.de/prechelt/Biblio/stop_tricks1997.pdf
     (see pages 4-5)
     """
-    
+
     def __init__(self, *args, alpha=5/2, interval_length=25,
                  verbose=False, **kwargs):
         self.losses = list()
@@ -21,17 +21,17 @@ class PrecheltStopping(StoppingAbstraction):
 
 
     def is_converged(self, loss):
-        
-        # find the lowest loss encountered so far       
+
+        # find the lowest loss encountered so far
         if len(self.losses) == 0:
             lowest_loss_val = np.inf
         else:
             lowest_loss_val = np.min(self.losses)
-        
+
         # update liss of losses
         self.losses.append(loss)
         epoch = len(self.losses)
-        
+
         # compute factors
         generalization_loss = self.losses[-1] / lowest_loss_val - 1
         if epoch < self.interval_length:
@@ -41,13 +41,13 @@ class PrecheltStopping(StoppingAbstraction):
             improvement_factor = np.mean(interval) / np.min(interval) - 1
 
         criteria = generalization_loss / improvement_factor
-        
+
         if self.verbose:
             print("Generalization_loss = {0:.3f}".format(generalization_loss),end="")
             print(". Improvement factor = {0:.3f}".format(improvement_factor), end="")
             print(". GL / IF = {0:.3f}".format(criteria))
 
-        if criteria > self.alpha:
+        if criteria > self.alpha and self.verbose:
             print("stopping criteria: {0:.3f} > {1:.3f} is {2}".format(criteria,
                                                                        self.alpha,
                                                                        True))
