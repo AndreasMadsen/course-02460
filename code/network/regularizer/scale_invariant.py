@@ -6,8 +6,9 @@ import theano
 from network.regularizer.abstaction import RegularizerAbstraction
 
 class ScaleInvariant(RegularizerAbstraction):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, use_Rop=False, **kwargs):
         super().__init__(*args, **kwargs)
+        self._use_Rop = use_Rop
 
     def _regularizer(self, prediction, input_var, target_var, **kwargs):
         # - Why not T.grad(loss[i], x[i, :, :, :]) instread of
@@ -22,14 +23,19 @@ class ScaleInvariant(RegularizerAbstraction):
             p_class_t = p[i, t[i]]
 
             return T.dot(
-                T.flatten(T.grad(p_class_t, x)[i, :, :, :]),
-                T.flatten(x[i, :, :, :])
+                T.flatten(T.grad(p_class_t, x)[i]),
+                T.flatten(x[i])
             )
 
-        jacobi_dot_x, _ = theano.scan(
-            loop,
-            non_sequences=[input_var, prediction, target_var],
-            sequences=T.arange(input_var.shape[0])
-        )
+        if self._use_Rop:
+            (x, p, t) = (input_var, prediction, target_var)
+            jacobi_dot_x = T.Rop(p[T.arange(p.shape[0]), t], x, x)
+
+        else:
+            jacobi_dot_x, _ = theano.scan(
+                loop,
+                non_sequences=[input_var, prediction, target_var],
+                sequences=T.arange(input_var.shape[0])
+            )
 
         return T.pow(jacobi_dot_x, 2).mean()
