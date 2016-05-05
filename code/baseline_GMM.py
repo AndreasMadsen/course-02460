@@ -15,6 +15,10 @@ import helpers
 import plot
 import early_stopping
 
+
+from sklearn.utils.extmath import logsumexp
+from sklearn import mixture
+
 # Create data selector object
 #selector = timit.FileSelector()
 selector = elsdsr.FileSelector()
@@ -24,60 +28,49 @@ speakers = selector.labels
 selector = helpers.MFCC(selector, normalize_signal=True)
 #selector = helpers.Truncate(selector, truncate=100, axis=0)
 selector = helpers.Splitter(selector, split_size=100, axis=0)
+#selector = helpers.Splitter(selector, split_size=100, axis=0)
 #selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 selector = helpers.Validation(selector, test_fraction=0.50, stratified=True)
 
-speakers = list(range(0, len(speakers)))
+speakers = range(0, len(speakers))
 
 X_train = collections.defaultdict(list)
 for input, target in selector.train:
     X_train[target].append(input.ravel())
 
-
-
-X_test = collections.defaultdict(list)
-for input, target in selector.test:
-    X_test[target].append(input.ravel())
-
-for key, values in X_train.items():
-    X_train[key] = np.array(values)
-
-for key, values in X_test.items():
-    X_test[key] = np.array(values)
-
-#
-#for X in [X_train, X_test]:
-#    for key, values in X.items():
-#        X[key] = np.array(values)
-#
-
 models = []
-for speaker in sorted(speakers):
+for speaker in speakers:
     #clf = GMM(n_components=5) # TODO fix number of samples
     clf = GMM(n_components=3)
     clf.fit(X_train[speaker])
-    print(X_train[speaker].shape)
     models.append(clf)
 
 errors = 0
 observations = 0
 for input, target in selector.test:
-    for model in models:
-        prob = model.predict_proba([input.ravel()])
-        print('prob')
-        for x in prob[0]:
-            print(x)
-        print('')
+    #probs = np.array([model.predict_proba([input.ravel()])[0] for model in models])
+    #probs = np.array([model.predict_proba([input.ravel()])[0] for model in models])
+    probs = np.array([model.score([input.ravel()])[0] for model in models])
 
-    import sys
-    sys.exit()
-    probs = np.array([model.predict_proba([input.ravel()])[0] for model in models])
+    #probs = []
+    #for model in models:
+    #    lpr = (mixture.log_multivariate_normal_density(np.array([input.ravel()]), model.means_, model.covars_, model.covariance_type) + np.log(model.weights_)) # probabilities of components
+    #    #print(lpr)
+    #    logprob = logsumexp(lpr, axis=1) # logsum to get probability of GMM
+    #    prob = np.exp(logprob) # 0 < probs < 1
+
+    #    probs.append(prob[0])
+    #    #break
+
+    #print(np.max(probs, axis=1))
+    #y_hat = np.argmax(np.max(probs, axis=1))
     print(probs)
-    print(probs.shape)
+    print(np.exp(probs))
     y_hat = np.argmax(probs)
     errors += (y_hat != target)
     print('y_hat = %d == %d' % (y_hat, target))
     observations += 1
+
 
 MSE = errors / observations
 print('missrate = %.4f' % (MSE))
