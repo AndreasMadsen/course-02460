@@ -31,14 +31,16 @@ def build_classifiers():
     ]
     return (names, classifiers)
 
-def build_datasets():
-    X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
+def build_datasets(n_samples=100):
+    X, y = make_classification(n_samples=n_samples, n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
     X += 2 * np.random.uniform(size=X.shape)
     linearly_separable = (X, y)
 
-    return [make_moons(noise=0.3),
-            make_circles(noise=0.2, factor=0.5),
-            linearly_separable]
+    names = ['moons', 'circles', 'linear']
+    datasets = [make_moons(n_samples=n_samples, noise=0.3),
+                make_circles(n_samples=n_samples, noise=0.2, factor=0.5),
+                linearly_separable]
+    return (names, datasets)
 
 #
 # From http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html
@@ -46,11 +48,12 @@ def build_datasets():
 h = .02  # step size in the mesh
 n_datasets = 3
 n_classifiers = 5
+samples = 25
 
 figure = plt.figure(figsize=(27, 9))
 i = 1
 # iterate over datasets
-for ds in build_datasets():
+for ds_name, ds in zip(*build_datasets(n_samples=samples)):
     # preprocess dataset, split into training and test part
     X, y = ds
     X = StandardScaler().fit_transform(X)

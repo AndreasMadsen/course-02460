@@ -33,18 +33,20 @@ def build_classifiers():
     ]
     return (names, classifiers)
 
-def build_datasets():
-    X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
+def build_datasets(n_samples=100):
+    X, y = make_classification(n_samples=n_samples, n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
     X += 2 * np.random.uniform(size=X.shape)
     linearly_separable = (X, y)
 
     names = ['moons', 'circles', 'linear']
-    datasets = [make_moons(noise=0.3),
-                make_circles(noise=0.2, factor=0.5),
+    datasets = [make_moons(n_samples=n_samples, noise=0.3),
+                make_circles(n_samples=n_samples, noise=0.2, factor=0.5),
                 linearly_separable]
     return (names, datasets)
 
-with open('./classifer-significance.csv', 'w') as fd:
+samples = 25
+
+with open('./output/classifer-significance.csv', 'w') as fd:
     writer = csv.DictWriter(fd,
                             ['trial', 'dataset', 'model', 'score'],
                             dialect='unix')
@@ -52,7 +54,7 @@ with open('./classifer-significance.csv', 'w') as fd:
 
     for trial in range(0, 100):
         # iterate over datasets
-        for ds_name, ds in zip(*build_datasets()):
+        for ds_name, ds in zip(*build_datasets(n_samples=samples)):
             # preprocess dataset, split into training and test part
             X, y = ds
             X = StandardScaler().fit_transform(X)
