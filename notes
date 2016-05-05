@@ -1,0 +1,34 @@
+notes (results on elsdsr):
+
+# GMM (3 components)
+missrate = 0.4332
+
+# GMM (4 components)
+missrate = 0.4440
+
+# GMM (5 components)
+missrate = 0.4278
+
+# Weight decay 5e-3
+missrate: 0.579251
+
+# Weight decay 1e-2 (seems to be the best value)
+missrate: 0.530259
+
+# Weight decay 5e-2
+missrate: 0.639769
+
+# Weight decay 1e-2 + ScaleInvariant 1e-10
+missrate: 0.619597
+
+# Weight decay 1e-2 + ScaleInvariant 1e-1 + sigmoid in first layer
+missrate: 0.423631
+
+# Weight decay 1e-2 + sigmoid in first layer
+missrate: 0.468300
+
+# Logistic regression (implemented as softmax layer - not fully converged)
+missrate: 0.350144
+
+# Weight decay 1e-2 + OffsetInvariant(1e-1)
+missrate: 0.478386
