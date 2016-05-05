@@ -1,0 +1,19 @@
+notes (results on elsdsr):
+
+# GMM (3 components)
+missrate = 0.4332
+
+# GMM (4 components)
+missrate = 0.4440
+
+# GMM (5 components)
+missrate = 0.4278
+
+# Weight decay 5e-3 (seems to be the best value)
+missrate: 0.579251
+
+# Weight decay 1e-2 (seems to be the best value)
+missrate: 0.530259
+
+# Weight decay 5e-2 (seems to be the best value)
+missrate: 0.639769
