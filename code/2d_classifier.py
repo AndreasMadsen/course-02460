@@ -20,35 +20,50 @@ def build_classifiers():
     nn_l2.compile()
 
     nn_si = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
+    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e+1))
     nn_si.compile()
 
-    names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant"]
+    nn_oi = network.ClassifierDNN(input_shape=(2, ), output_units=2)
+    nn_oi.add_regularizer(network.regularizer.OffsetInvariant(1e+1))
+    nn_oi.compile()
+
+    names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant", "NN + Offset Invariant"]
     classifiers = [
         RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
         LinearDiscriminantAnalysis(),
-        nn_simple, nn_l2, nn_si
+        nn_simple, nn_l2, nn_si, nn_oi
     ]
     return (names, classifiers)
+
+def xor_scale_invariant(n_samples=100, noise=0.4):
+    # Create true data
+    X = np.random.uniform(low=-1.0, high=1.0, size=(n_samples, 2))
+    # Create labels
+    y = np.zeros(n_samples, dtype='int32')
+    y[(X[:, 0] * X[:, 1]) > 0] = 1
+    # Offset true data
+    X += np.random.uniform(low=-1.0, high=1.0, size=(n_samples, 1)) * noise
+    return (X, y)
 
 def build_datasets(n_samples=100):
     X, y = make_classification(n_samples=n_samples, n_features=2, n_redundant=0, n_informative=2, n_clusters_per_class=1)
     X += 2 * np.random.uniform(size=X.shape)
     linearly_separable = (X, y)
 
-    names = ['moons', 'circles', 'linear']
+    names = ['moons', 'circles', 'linear', 'xor']
     datasets = [make_moons(n_samples=n_samples, noise=0.3),
                 make_circles(n_samples=n_samples, noise=0.2, factor=0.5),
-                linearly_separable]
+                linearly_separable,
+                xor_scale_invariant(n_samples=n_samples)]
     return (names, datasets)
 
 #
 # From http://scikit-learn.org/stable/auto_examples/classification/plot_classifier_comparison.html
 #
 h = .02  # step size in the mesh
-n_datasets = 3
-n_classifiers = 5
-samples = 25
+n_datasets = 4
+n_classifiers = 6
+samples = 100
 
 figure = plt.figure(figsize=(27, 9))
 i = 1
