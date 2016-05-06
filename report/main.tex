@@ -5,6 +5,8 @@
 \usepackage[T1]{fontenc}		% Brug 8-bit front
 \usepackage{lmodern}		% Vektor front
 
+\usepackage{02459}
+
 \usepackage[svgnames]{xcolor} % Udvider \color med "SVG color names"
 \usepackage{graphicx}	% Kompatibilitet til visning af pixel billeder (.png, .jpg, .gif)
 \usepackage{epstopdf}	% Kompatibilitet til visning af vector billeder (.eps)
@@ -18,7 +20,6 @@
 \usepackage{listings}	% Indsæt code
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-\usepackage{fancyhdr}	% Side hoved og sidefod
 \usepackage{todonotes}	% Cool to-do notes, [disable] skjuler to-do
 \usepackage[bookmarks,bookmarksnumbered,hidelinks]{hyperref} % clickable pdf (til sidst)
 \usepackage[bibstyle=ieee,citestyle=numeric-comp]{biblatex} % Benyt BibLaTeX til formatering
@@ -26,38 +27,31 @@
 
 \setlength{\marginparwidth}{80pt} 				% Mere brede på margin notes og to-do
 \setlength{\parindent}{0cm}   					% Deaktiver afsnit indrykning
-\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.gif}	% ændre til .png, .jpg for hurtig visning
-\pagestyle{fancy}
-\fancyhead[L]{}
-
+\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.gif}
 \numberwithin{equation}{section}
 
 \addbibresource{bibliography.bib}
 
 \begin{document}
 
-\title{Deep Neural Networks \\ for Speech Classification}
-\author{Andreas Madsen – s123598\\Frederik Wolgast Rørbech - s123956\\Lasse Regin Nielsen s123815}
+\title{Convolutional Neural Networks and Algebraic Scale Invariance \\ for Speech Classification}
+\name{Andreas Madsen (s123598), Frederik Wolgast Rørbech (s123956), Lasse Regin Nielsen (s123815)}
+\address{Technical University Of Denmark}
 \date{\today}
 
 \maketitle
-\tableofcontents
-\pagebreak
 
 % Using input because of page restriction of 4 pages (\include adds newpage)
 \input{abstract}
 \input{introduction}
-\input{materials}
+\input{methods}
 \input{results}
 \input{discussion}
 \input{conclusion}
 \input{acknowledgment}
+\printbibliography
 
-\pagebreak
 \appendix
 \include{appendix}
-
-\pagebreak
-\printbibliography
 
 \end{document}
