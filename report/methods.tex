@@ -3,7 +3,7 @@
 
 \subsection{Datasets: ELSDSR and TIMIT}
 
-Two datasets where used for speaker classification, ELSDSR and TIMIT. The ELSDSR dataset includes 23 people and was specifically created for automatic speaker recognition. The TIMIT dataset is a acoustic-phonetic speech corpus and was thus not directly created for automatic speaker recognition. The TIMIT dataset thus has people with one a few observations. To accommodate this the dataset was filtered to only include people with sufficiently many long observations. After this filtering only 81 people was left.
+Two datasets were used for speaker classification, ELSDSR and TIMIT. The ELSDSR dataset includes 23 people and was specifically created for automatic speaker recognition. The TIMIT dataset is an acoustic-phonetic speech corpus and was thus not directly created for automatic speaker recognition. The TIMIT dataset thus have people with only one or few observations. To accommodate for this the dataset was filtered to only include people with sufficiently many long observations. After this filtering only 81 people was left.
 
 \subsection{The Dieleman network}
 
@@ -43,4 +43,3 @@ The full loss function then becomes
 \end{equation}
 
 where $\lambda$ is the regularization parameter.
-
