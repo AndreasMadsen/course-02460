@@ -28,6 +28,11 @@
 \setlength{\marginparwidth}{40pt} 				% Mere brede på margin notes og to-do
 \DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.gif}
 
+\makeatletter
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.6}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
 \addbibresource{bibliography.bib}
 
 \begin{document}

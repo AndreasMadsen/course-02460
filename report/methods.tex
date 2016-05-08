@@ -1,6 +1,46 @@
 %!TEX root = main.tex
 \section{Materials and Methods}
 
-•Experiments
-•Collection of data
-•Description of methods to a level that others can reproduce the results
+\subsection{Datasets: ELSDSR and TIMIT}
+
+Two datasets where used for speaker classification, ELSDSR and TIMIT. The ELSDSR dataset includes 23 people and was specifically created for automatic speaker recognition. The TIMIT dataset is a acoustic-phonetic speech corpus and was thus not directly created for automatic speaker recognition. The TIMIT dataset thus has people with one a few observations. To accommodate this the dataset was filtered to only include people with sufficiently many long observations. After this filtering only 81 people was left.
+
+\subsection{The Dieleman network}
+
+\todo[inline]{Convolutional, Max Pool, ReLU, lasagne, theano. Overall network.}
+
+\subsection{Scale Invariant Regualization}
+
+The cross entropy loss function for classification is given as:
+\begin{equation}
+\mathcal{L} = - \sum_{i=1}^N \sum_{k=1}^K t_{i,k} \ln(P(C_{i,k} | x_i, w))
+\end{equation}
+
+The approach used in \cite{scale-invariante}, is then to add a transformation invariant regularizer to this loss function. The transformation is given as $s(x, \alpha)$ where $x$ is the observation and $\alpha$ is the transformation parameter.
+\begin{align}
+\text{scale transformation:}&\quad s(x, \alpha) = \alpha x\\
+\text{offset transformation:}&\quad s(x, \alpha) = x + \alpha
+\end{align}
+
+The regularizer then penalizes small changes in the output function (in this case $P(C_{i, k})$), by minimizing the derivative of the output function with respect to $\alpha$.
+\begin{equation}
+\mathcal{R}(s) = \sum_{i=1}^N \left. \frac{\partial P(C_{i, k} | s(x_i, \alpha), w)}{\partial \alpha} \right|^2_{\alpha=0}
+\end{equation}
+By using the chain rule the derivative can be expressed as:
+\begin{equation*}
+\left. \frac{\partial P(C_{i, k} | s(x_i, \alpha), w)}{\partial \alpha} \right|_{\alpha=0} = \left.\nabla_x P(C_{i, k} | x_i, w) \frac{\partial s(x_i, \alpha)}{\partial \alpha} \right|_{\alpha=0}
+\end{equation*}
+
+This is extremely convenient from an implementation perspective, as $P(C_{i, k} | x_i, w)$ is already expressed as a theano graph. Note that this only works if $s(x, 0) = x$, which is not the case for the scale transformation. However the idea is simply that the derivative should be small for $\alpha$'s around the identity transformation, which for scaling is not $0$ but $1$. Thus it makes sense to substitute $\alpha = 0$ with $\alpha = 1$ for scaling, in which case the formulation do hold.
+\begin{align}
+\text{scale invariant:}&\quad \mathcal{R} = \sum_{i=1}^N \nabla_x P(C_{i, k} | x_i, w)\bigcdot x_i \\
+\text{offset invariant:}&\quad \mathcal{R} = \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) + 1\right)
+\end{align}
+
+The full loss function then becomes
+\begin{equation}
+\mathcal{L} = - \sum_{i=1}^N \sum_{k=1}^K t_{i,k} \ln(P(C_{i,k} | x_i, w)) + \lambda \mathcal{R}
+\end{equation}
+
+where $\lambda$ is the regularization parameter.
+
