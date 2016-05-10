@@ -1,6 +1,37 @@
 %!TEX root = main.tex
 \section{Results}
 
+The Dieleman model was used for both sex classification as validation of the implementation and then speaker classification.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{r|c|c}
+	model & TIMIT & ELSDSR \\ \hline
+	Baseline & 0.354 & 0.465 \\
+	Logistic & 0.215463 & 0.020260 \\
+	Dieleman & 0.102662 & 0.021708 \\
+	Dieleman + Weight Decay     & 0.166033 & 0.044863 \\
+	Dieleman + Scale Invariant  & 0.101394 & 0.033285 \\
+	Dieleman + Offset Invariant & 0.125475 & 0.028944
+\end{tabular}
+\caption{misclassification rate for sex classification}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{r|c|c}
+	model & TIMIT & ELSDSR \\ \hline
+	Baseline & \\
+	GMM on MFCC & \\
+	Logistic & \\
+	Dieleman & \\
+	Dieleman + Weight Decay     & \\
+	Dieleman + Scale Invariant  & \\
+	Dieleman + Offset Invariant &
+\end{tabular}
+\caption{misclassification rate for speaker classification}
+\end{table}
+
 •Objective presentation of key results, without interpretation (text and tables
 and figures)
 •Important negative results should also be reported
