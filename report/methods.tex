@@ -7,7 +7,35 @@ Two datasets were used for speaker classification, ELSDSR and TIMIT. The ELSDSR 
 
 \subsection{The Dieleman network}
 
-\todo[inline]{Convolutional, Max Pool, ReLU, lasagne, theano. Overall network.}
+The Dieleman network, expecting a spectrogram $x \in \mathbb{R}^{m \times n}$ as input, consists of 6 layers: 2 $\times$ \emph{Convolutional} layer + \emph{Max Pooling} layer followed by 2 consecutive fully connected \emph{Dense} layers.
+
+
+The 1st Convolutional layer contains $32$ filters (kernels) of dimension $m \times 8$. Each filter only convolutes along the time axis with a stride of $1$ computing a single value for each stride offset, resulting in an output of size $n - \frac{8}{2} + 1 = n - 3$ for each filter i.e. the output of layer 1 is of dimension $32 \times (n-3)$. This is illustrated in \cref{fig:convolution-1}.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{inkscape/convolution.pdf}
+  \caption{Illustration of 1st convolution layer for a single filter.}
+  \label{fig:convolution-1}
+\end{figure}
+
+The 2nd layer performs a 1-dimensional max pooling of size $1 \times 4$ on the output from layer 1, i.e. for each filter result in layer 1, a window of size $1 \times 4$ is slided through the result with a stride offset of $4$ extracting the maximum value in the window.
+
+This reduces the dimensionality of the output by $4$, thus giving a layer output of size $32 \times \frac{1}{4}(n-3)$.
+
+For the 3rd and 4th network layer the same procedure is applied using filters of size $1 \times 8$, and again a max pooling of size $1 \times 4$.
+
+Finally the output of layer 4 is feed into a regular fully-connected dense layer of $100$ nodes, and then a softmax function is used as the final layer.
+
+On the \emph{Convolutional} and \emph{Dense} layers the rectifier function (\cref{eq:rectifier}) is used as activation function
+\begin{equation}
+  f(x) = \text{max(}0, x\text{)},
+  \label{eq:rectifier}
+\end{equation}
+i.e. the layers uses rectified linear units (ReLU).
+
+The network is implemented in \texttt{python} using the library \texttt{lasagne}, which is implemented on top of \texttt{Theano} which allows for the use of highly optimized mathematical expression implementations, and also allows for transparent use of GPU \cite{theano}.
 
 \subsection{Scale Invariant Regualization}
 

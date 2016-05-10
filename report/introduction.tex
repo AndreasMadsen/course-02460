@@ -3,6 +3,6 @@
 
 Traditionally a two-stage approach of first feature extraction and secondly inputting these feature into a classifier, have been used for speaker classification. An example of such is a model using MFCC features and then fitting an GMM to each speaker.
 
-Getting these feature right requires a wast amount of domain knowledge. Resent effort \cite{dieleman} in neural networks, have shown that it is possible to use a simple spectogram and a convolutional neural network to produce similar results on a tag classification problem.
+Getting these feature right requires a wast amount of domain knowledge. Recent efforts \cite{dieleman} in neural networks, have shown that it is possible to use a simple spectogram and a convolutional neural network to produce similar results on a tag classification problem.
 
 In this paper the performance of the Dieleman \cite{dieleman} network on the speakers classification problem is investigated. Finally since it was found that the Dieleman network didn't experience any performance gain from using regularization\cite{dieleman}, we will create a special regularizer that should cause the model to become scale invariant. This regularizer is inspired from \cite{scale-invariante} and specialized for scale invariance.
