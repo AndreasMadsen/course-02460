@@ -11,34 +11,29 @@ import helpers
 import plot
 import early_stopping
 
-def create_selector(usage):
-    selector = timit.FileSelector(usage=usage)#,dialect='dr1')
-    selector = helpers.TargetType(selector, target='sex')
-    selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
-    selector = helpers.Truncate(selector, truncate=300, axis=2)
-    selector = helpers.Normalize(selector)
-    selector = helpers.Minibatch(selector)
-    return selector
+# Create data selector object
+selector = timit.FileSelector()
+selector = helpers.Filter(selector, target='speaker', min_count=10, min_size=300, nperseg=256, noverlap=128)
+selector = helpers.TargetType(selector, target='sex')
+selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
+selector = helpers.Splitter(selector, split_size=100, axis=2)
+selector = helpers.Normalize(selector)
+selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
-test_selector = create_selector('test')
-train_selector = create_selector('train')
+train_selector = helpers.Minibatch(selector.train)
+test_selector  = helpers.Minibatch(selector.test)
 
-# cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2,
-#                           verbose=True)
+cnn = network.Logistic(input_shape=(1, 129, 100), output_units=2, verbose=True)
+# cnn = network.DielemanCNN(input_shape=(1, 129, 100), output_units=2, verbose=True)
 # cnn.add_regularizer(network.regularizer.WeightDecay(1e-1))
+# cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
+# cnn.add_regularizer(network.regularizer.OffsetInvariant(1e-1))
 
-# cnn = network.Logistic(input_shape=(1, 129, 300), output_units=2,
-#                        verbose=True, learning_rate=0.01)
-
-# cnn = network.SimpleCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
-
-cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=2, verbose=True)
-cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
 cnn.compile()
 
-epochs = 200
+epochs = 500
 
-stoppage = early_stopping.PrecheltStopping(verbose=True)#verbose=True, alpha=1.5,interval_length=10
+stoppage = early_stopping.PrecheltStopping(verbose=True)
 
 loss_plot = plot.LiveLoss(epochs)
 
