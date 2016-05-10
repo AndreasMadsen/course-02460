@@ -61,8 +61,8 @@ By using the chain rule the derivative can be expressed as:
 
 This is extremely convenient from an implementation perspective, as $P(C_{i, k} | x_i, w)$ is already expressed as a theano graph. Note that this only works if $s(x, 0) = x$, which is not the case for the scale transformation. However the idea is simply that the derivative should be small for $\alpha$'s around the identity transformation, which for scaling is not $0$ but $1$. Thus it makes sense to substitute $\alpha = 0$ with $\alpha = 1$ for scaling, in which case the formulation do hold. The regularizers are then:
 \begin{align}
-\text{scale invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w)\bigcdot x_i\right)^2 \\
-\text{offset invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) + 1\right)^2
+\text{scale invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot x_i\right)^2 \\
+\text{offset invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot \mathbf{1}\right)^2
 \end{align}
 
 The full loss function then $\mathcal{L} = \mathcal{L}_{entropy} + \lambda \mathcal{R}$, where $\lambda$ is the regularization parameter.
