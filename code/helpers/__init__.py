@@ -10,3 +10,4 @@ from helpers.filter import Filter
 from helpers.binary import Binary
 from helpers.splitter import Splitter
 from helpers.mfcc import MFCC
+from helpers.cross_validation import CrossValidation
