@@ -74,7 +74,7 @@ for fold in selector.folds:
             observations += len(predict)
             missclassifications += np.sum(predict != test_target)
 
-        last_missclassification = missclassifications
+        last_missclassification = missclassifications / observations
 
     missclassifications_list.append(last_missclassification)
     print('missrate: %f' % (last_missclassification))

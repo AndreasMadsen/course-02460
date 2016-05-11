@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from early_stopping.abstraction import StoppingAbstraction
 
 class PrecheltStopping(StoppingAbstraction):
