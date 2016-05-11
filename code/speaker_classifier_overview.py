@@ -33,13 +33,13 @@ for _, target in test_selector:
         speakers_count[item] += 1
 
 # Print speakers count result
-for speaker, count in zip(speakers, speakers_count_test):
+for speaker, count in zip(speakers, speakers_count_train):
     if (count == 0):
         print('Speaker train: %s was removed in the filter function' % (speaker))
     else:
         print('Speaker train: %s, count: %d' % (speaker, count))
 print('')
-for speaker, count in zip(speakers, speakers_count_train):
+for speaker, count in zip(speakers, speakers_count_test):
     if (count == 0):
         print('Speaker test: %s was removed in the filter function' % (speaker))
     else:
