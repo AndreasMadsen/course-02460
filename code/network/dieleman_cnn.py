@@ -73,7 +73,7 @@ class DielemanCNN(NetworkAbstraction):
         return network
 
     def _loss_function(self, prediction):
-        loss = lasagne.objectives.categorical_crossentropy(prediction, self.target_var)
+        loss = lasagne.objectives.categorical_crossentropy(prediction + 1e-6, self.target_var)
         return loss.mean()
 
     def _update_function(self, loss, parameters):
