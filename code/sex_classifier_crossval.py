@@ -1,5 +1,6 @@
 
 import os
+import math
 import numpy as np
 import lasagne
 import theano
@@ -39,6 +40,7 @@ for fold in selector.folds:
     stoppage = early_stopping.PrecheltStopping(verbose=False)
 
     # Train network
+    last_missclassification = 0
     for epoch in range(epochs):
         train_loss = 0
         train_batches = 0
@@ -61,19 +63,21 @@ for fold in selector.folds:
               epoch + 1, train_loss_current_epoch,
               test_loss_current_epoch))
 
-        if stoppage.is_converged(test_loss_current_epoch):
+        if stoppage.is_converged(test_loss_current_epoch) or math.isnan(train_loss_current_epoch):
             print("Stopping early")
             break
 
-    missclassifications = 0
-    observations = 0
-    for (test_input, test_target) in test_selector:
-        predict = np.argmax(cnn.predict(test_input), axis=1)
-        observations += len(predict)
-        missclassifications += np.sum(predict != test_target)
+        missclassifications = 0
+        observations = 0
+        for (test_input, test_target) in test_selector:
+            predict = np.argmax(cnn.predict(test_input), axis=1)
+            observations += len(predict)
+            missclassifications += np.sum(predict != test_target)
 
-    missclassifications_list.append(missclassifications / observations)
-    print('missrate: %f' % (missclassifications / observations))
+        last_missclassification = missclassifications
+
+    missclassifications_list.append(last_missclassification)
+    print('missrate: %f' % (last_missclassification))
 
 print('missrates: ')
 print(missclassifications_list)
