@@ -33,12 +33,12 @@ for fold in selector.folds:
 
     cnn.compile()
 
-    epochs = 200
+    epochs = 500
 
     stoppage = early_stopping.PrecheltStopping(verbose=False)
 
     # Train network
-    max_error = 1.0
+    last_missclassification = 0
     for epoch in range(epochs):
         train_loss = 0
         train_batches = 0
@@ -54,22 +54,28 @@ for fold in selector.folds:
             test_loss += cnn.loss(*test_data)
             test_batches += 1
 
-        print("Epoch %d: Train Loss %g, Test Loss %g" % (
-              epoch + 1, train_loss / train_batches, test_loss / test_batches))
+        train_loss_current_epoch = train_loss / train_batches
+        test_loss_current_epoch = test_loss  / test_batches
 
-        if stoppage.is_converged(test_loss / test_batches):
+        print("Epoch %d: Train Loss %g, Test Loss %g" % (
+              epoch + 1, train_loss_current_epoch,
+              test_loss_current_epoch))
+
+        if stoppage.is_converged(test_loss_current_epoch) or math.isnan(train_loss_current_epoch):
             print("Stopping early")
             break
 
-    missclassifications = 0
-    observations = 0
-    for (test_input, test_target) in test_selector:
-        predict = np.argmax(cnn.predict(test_input), axis=1)
-        observations += len(predict)
-        missclassifications += np.sum(predict != test_target)
+        missclassifications = 0
+        observations = 0
+        for (test_input, test_target) in test_selector:
+            predict = np.argmax(cnn.predict(test_input), axis=1)
+            observations += len(predict)
+            missclassifications += np.sum(predict != test_target)
 
-    missclassifications_list.append(missclassifications / observations)
-    print('missrate: %f' % (missclassifications / observations))
+        last_missclassification = missclassifications / observations
+
+    missclassifications_list.append(last_missclassification)
+    print('missrate: %f' % (last_missclassification))
 
 print('missrates: ')
 print(missclassifications_list)
