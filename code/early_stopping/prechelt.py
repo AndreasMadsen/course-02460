@@ -19,8 +19,9 @@ class PrecheltStopping(StoppingAbstraction):
             print("\talpha = {0}".format(alpha))
             print("\timprovement factor length = {0}".format(interval_length))
 
-
     def is_converged(self, loss):
+        if math.isnan(loss):
+            loss = self.losses[-1] if len(self.losses) > 0 else 1
 
         # find the lowest loss encountered so far
         if len(self.losses) == 0:
