@@ -33,7 +33,7 @@ On the \emph{Convolutional} and \emph{Dense} layers the rectifier function (\cre
 \end{equation}
 i.e. the layers uses rectified linear units (ReLU).
 
-The network is implemented in \texttt{python} using the library \texttt{lasagne}, which is implemented on top of \texttt{Theano} which allows for the use of highly optimized mathematical expression implementations, and also allows for transparent use of GPU \cite{theano}.
+The network is implemented in \texttt{python} using the library \texttt{lasagne}, which is implemented on top of \texttt{Theano} which allows for the use of highly optimized mathematical expression implementations, and also allows for transparent use of GPUs \cite{theano}.
 
 \subsection{Scale Invariant Regualization}
 
@@ -42,11 +42,11 @@ The cross entropy loss function for classification is given as:
 \mathcal{L}_{entropy} = - \frac{1}{N} \sum_{i=1}^N \sum_{k=1}^K t_{i,k} \ln(P(C_{i,k} | x_i, w))
 \end{equation}
 
-The approach used in \cite{scale-invariante}, is to add a transformation invariant regularizer to this loss function. The transformation is given as $s(x, \alpha)$ where $x$ is the observation and $\alpha$ is the transformation parameter.
+The approach used in \cite{scale-invariante}, is to add a transformation invariant regularizer to this loss function. The transformation is given as $s(x, \alpha)$ where $x$ is the observation and $\alpha$ is the transformation parameter. The only restriction on $s$ is that $s(x, \alpha) |_{\alpha=0} =x$. As such two examples of $s$ are:
 \begin{align}
-\text{scale transformation:}&\quad s(x, \alpha) = \alpha x\\
+\text{scale transformation:}&\quad s(x, \alpha) = (1+\alpha) x\\
 \text{offset transformation:}&\quad s(x, \alpha) = x + \alpha
-\end{align}\todo{why no just define scale as (1+alpha) here}
+\end{align}
 
 The regularizer then penalizes changes in the output function (in this case $P(C_{i, k})$), by minimizing the derivative of the output function with respect to $\alpha$.
 \begin{equation}
@@ -55,9 +55,9 @@ The regularizer then penalizes changes in the output function (in this case $P(C
 By using the chain rule the derivative can be expressed as:
 \begin{equation*}
 \left. \frac{\partial P(C_{i, k} | s(x_i, \alpha), w)}{\partial \alpha} \right|_{\alpha=0} = \left.\nabla_x P(C_{i, k} |  x_i, w) \frac{\partial s(x_i, \alpha)}{\partial \alpha} \right|_{\alpha=0}
-\end{equation*}\todo{this only holds if $s(x_i,\alpha)|_{\alpha=0} = 0$ which it isn't with the above scale definition/in general}
+\end{equation*}
 
-This is extremely convenient from an implementation perspective, as $P(C_{i, k} | x_i, w)$ is already expressed as a Theano graph. Note that this only works if $s(x, 0) = x$, which is not the case for the scale transformation. However the idea is simply that the derivative should be small for $\alpha$'s around the identity transformation, which for scaling is not $0$ but $1$. Thus it makes sense to substitute $\alpha = 0$ with $\alpha = 1$ for scaling, in which case the formulation do hold. The regularizers are then: \todo{why no just define (1+alpha) above and cut this section?}
+This is extremely convenient from an implementation perspective, as $P(C_{i, k} | x_i, w)$ is already expressed as a Theano graph. More concretely for the scale and offset invariance the regularizers become:
 \begin{align}
 \text{scale invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot x_i\right)^2 \\
 \text{offset invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot \mathbf{1}\right)^2
