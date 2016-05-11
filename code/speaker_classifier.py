@@ -18,19 +18,19 @@ selector = helpers.Filter(selector, target='speaker', min_count=10, min_size=300
 selector = helpers.TargetType(selector, target='speaker')
 speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
-selector = helpers.Truncate(selector, truncate=300, axis=2)
+selector = helpers.Splitter(selector, split_size=100, axis=2)
 selector = helpers.Normalize(selector)
 selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
-# cnn = network.Logistic(input_shape=(1, 129, 300), output_units=len(speakers),
-#                        verbose=True, learning_rate=0.01)
-cnn = network.DielemanCNN(input_shape=(1, 129, 300), output_units=len(speakers),
-                          verbose=True, learning_rate=0.001,
-                          dropout=True)
-cnn.add_regularizer(network.regularizer.WeightDecay(1e-1))
+cnn = network.Logistic(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
+# cnn = network.DielemanCNN(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
+# cnn.add_regularizer(network.regularizer.WeightDecay(1e-1))
+# cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
+# cnn.add_regularizer(network.regularizer.OffsetInvariant(1e-1))
+
 cnn.compile()
 
 epochs = 500
