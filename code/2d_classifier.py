@@ -27,10 +27,10 @@ def build_classifiers():
     nn_oi.add_regularizer(network.regularizer.OffsetInvariant(1e+1))
     nn_oi.compile()
 
-    names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant", "NN + Offset Invariant"]
+    names = ["NN", "NN + L2", "NN + Scale Invariant", "NN + Offset Invariant"]
     classifiers = [
-        RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-        LinearDiscriminantAnalysis(),
+        #RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+        #LinearDiscriminantAnalysis(),
         nn_simple, nn_l2, nn_si, nn_oi
     ]
     return (names, classifiers)
@@ -62,13 +62,14 @@ def build_datasets(n_samples=100):
 #
 h = .02  # step size in the mesh
 n_datasets = 4
-n_classifiers = 6
+n_classifiers = 4
 samples = 100
+levels = np.linspace(0, 1, 10)
 
-figure = plt.figure(figsize=(27, 9))
+figure = plt.figure(figsize=(12.5, 10))
 i = 1
 # iterate over datasets
-for ds_name, ds in zip(*build_datasets(n_samples=samples)):
+for ds_i, (ds_name, ds) in enumerate(zip(*build_datasets(n_samples=samples))):
     # preprocess dataset, split into training and test part
     X, y = ds
     X = StandardScaler().fit_transform(X)
@@ -91,6 +92,7 @@ for ds_name, ds in zip(*build_datasets(n_samples=samples)):
     ax.set_ylim(yy.min(), yy.max())
     ax.set_xticks(())
     ax.set_yticks(())
+    ax.set_ylabel(ds_name, fontsize=16)
     i += 1
 
     # iterate over classifiers
@@ -108,7 +110,7 @@ for ds_name, ds in zip(*build_datasets(n_samples=samples)):
 
         # Put the result into a color plot
         Z = Z.reshape(xx.shape)
-        ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
+        ax.contourf(xx, yy, Z, levels, cmap=cm, alpha=.8)
 
         # Plot also the training points
         ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
@@ -120,10 +122,11 @@ for ds_name, ds in zip(*build_datasets(n_samples=samples)):
         ax.set_ylim(yy.min(), yy.max())
         ax.set_xticks(())
         ax.set_yticks(())
-        ax.set_title(name)
+        if (ds_i == 0): ax.set_title(name, fontsize=16)
         ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
-                size=15, horizontalalignment='right')
+                size=16, horizontalalignment='right')
         i += 1
 
 figure.subplots_adjust(left=.02, right=.98)
+plt.savefig('2d_classifier.pdf')
 plt.show()

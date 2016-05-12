@@ -26,10 +26,9 @@ test_selector  = helpers.Minibatch(selector.test)
 
 cnn = network.Logistic(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
 # cnn = network.DielemanCNN(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
-# cnn.add_regularizer(network.regularizer.WeightDecay(1e-1))
+# cnn.add_regularizer(network.regularizer.WeightDecay(1e-2))
 # cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))
-# cnn.add_regularizer(network.regularizer.OffsetInvariant(1e-1))
-
+# cnn.add_regularizer(network.regularizer.OffsetInvariant(1e+1, use_Rop=True))
 cnn.compile()
 
 epochs = 500
