@@ -13,7 +13,6 @@ import plot
 import early_stopping
 
 # Create data selector object
-#selector = timit.FileSelector()
 selector = elsdsr.FileSelector()
 selector = helpers.TargetType(selector, target='speaker')
 speakers = selector.labels

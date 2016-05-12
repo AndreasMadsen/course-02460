@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from early_stopping.abstraction import StoppingAbstraction
 
 class PrecheltStopping(StoppingAbstraction):
@@ -19,8 +20,9 @@ class PrecheltStopping(StoppingAbstraction):
             print("\talpha = {0}".format(alpha))
             print("\timprovement factor length = {0}".format(interval_length))
 
-
     def is_converged(self, loss):
+        if math.isnan(loss):
+            loss = self.losses[-1] if len(self.losses) > 0 else 1
 
         # find the lowest loss encountered so far
         if len(self.losses) == 0:
@@ -47,10 +49,11 @@ class PrecheltStopping(StoppingAbstraction):
             print(". Improvement factor = {0:.3f}".format(improvement_factor), end="")
             print(". GL / IF = {0:.3f}".format(criteria))
 
-        if criteria > self.alpha and self.verbose:
-            print("stopping criteria: {0:.3f} > {1:.3f} is {2}".format(criteria,
-                                                                       self.alpha,
-                                                                       True))
+        if criteria > self.alpha:
+            if self.verbose:
+                print("stopping criteria: {0:.3f} > {1:.3f} is {2}".format(criteria,
+                                                                           self.alpha,
+                                                                           True))
             return True
         else:
             return False
