@@ -80,11 +80,11 @@ with open('./output/classifer-significance-25-samples.csv', 'w') as fd:
                 clf.fit(X_train, y_train)
                 score = clf.score(X_test, y_test)
 
-                print('[%d] - %s using %s: %f' % (trial, ds_name, clf_name, score))
+                print('[%d] - %s using %s: %f' % (trial, ds_name, clf_name, 1 - score))
 
                 writer.writerow({
                     'trial': trial,
                     'dataset': ds_name,
                     'model': clf_name,
-                    'score': score
+                    'missclassification': 1 - score
                 })

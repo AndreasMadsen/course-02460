@@ -123,7 +123,7 @@ for ds_i, (ds_name, ds) in enumerate(zip(*build_datasets(n_samples=samples))):
         ax.set_xticks(())
         ax.set_yticks(())
         if (ds_i == 0): ax.set_title(name, fontsize=16)
-        ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
+        ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % (1 - score)).lstrip('0'),
                 size=16, horizontalalignment='right')
         i += 1
 
