@@ -49,10 +49,11 @@ class PrecheltStopping(StoppingAbstraction):
             print(". Improvement factor = {0:.3f}".format(improvement_factor), end="")
             print(". GL / IF = {0:.3f}".format(criteria))
 
-        if criteria > self.alpha and self.verbose:
-            print("stopping criteria: {0:.3f} > {1:.3f} is {2}".format(criteria,
-                                                                       self.alpha,
-                                                                       True))
+        if criteria > self.alpha:
+            if self.verbose:
+                print("stopping criteria: {0:.3f} > {1:.3f} is {2}".format(criteria,
+                                                                           self.alpha,
+                                                                           True))
             return True
         else:
             return False
