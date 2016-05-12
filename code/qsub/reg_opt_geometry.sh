@@ -1,5 +1,5 @@
 #!/bin/sh
-#PBS -N regularization-optimization-geometry-offset
+#PBS -N regularization-optimization-geometry-offset-scale
 #PBS -l walltime=24:00:00
 #PBS -l nodes=1:ppn=8
 #PBS -m eba
