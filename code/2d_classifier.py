@@ -64,6 +64,7 @@ h = .02  # step size in the mesh
 n_datasets = 4
 n_classifiers = 4
 samples = 100
+levels = np.linspace(0, 1, 10)
 
 figure = plt.figure(figsize=(12.5, 10))
 i = 1
@@ -109,7 +110,7 @@ for ds_i, (ds_name, ds) in enumerate(zip(*build_datasets(n_samples=samples))):
 
         # Put the result into a color plot
         Z = Z.reshape(xx.shape)
-        ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
+        ax.contourf(xx, yy, Z, levels, cmap=cm, alpha=.8)
 
         # Plot also the training points
         ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
@@ -127,5 +128,5 @@ for ds_i, (ds_name, ds) in enumerate(zip(*build_datasets(n_samples=samples))):
         i += 1
 
 figure.subplots_adjust(left=.02, right=.98)
-plt.savefig('2d_classifier.eps')
+plt.savefig('2d_classifier.pdf')
 plt.show()
