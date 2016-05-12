@@ -11,9 +11,9 @@ model & TIMIT & ELSDSR \\ \hline
                     Logistic & $0.094 \pm 0.012$ & $0.030 \pm 0.007$ \\
                  GMM on MFCC & $0.192 \pm 0.024$ & $0.140 \pm 0.019$ \\
                     Dieleman & $0.093 \pm 0.012$ & $0.026 \pm 0.006$ \\
-     Dieleman + Weight Decay & $0.114 \pm 0.013$ & $0.036 \pm 0.016$ \\
-  Dieleman + Scale Invarient & $0.111 \pm 0.015$ & $0.022 \pm 0.006$ \\
- Dieleman + Offset Invarient & $0.107 \pm 0.008$ & $0.027 \pm 0.014$ \\
+     Dieleman + L2 & $0.114 \pm 0.013$ & $0.036 \pm 0.016$ \\
+  Dieleman + Scale & $0.111 \pm 0.015$ & $0.022 \pm 0.006$ \\
+ Dieleman + Offset & $0.107 \pm 0.008$ & $0.027 \pm 0.014$ \\
 \end{tabular}
 \caption{misclassification rate for sex classification with $95\%$ confidence internal.}
 \end{table}
@@ -26,9 +26,9 @@ model & TIMIT & ELSDSR \\ \hline
                     Logistic & $0.796 \pm 0.046$ & $0.338 \pm 0.043$ \\
                  GMM on MFCC & $0.836 \pm 0.020$ & $0.391 \pm 0.023$ \\
                     Dieleman & $0.965 \pm 0.021$ & $0.570 \pm 0.029$ \\
-     Dieleman + Weight Decay & $0.944 \pm 0.020$ & $0.552 \pm 0.045$ \\
-  Dieleman + Scale Invarient & $0.973 \pm 0.007$ & $0.640 \pm 0.110$ \\
- Dieleman + Offset Invarient & $0.971 \pm 0.006$ & $0.628 \pm 0.117$ \\
+     Dieleman + L2 & $0.944 \pm 0.020$ & $0.552 \pm 0.045$ \\
+  Dieleman + Scale & $0.973 \pm 0.007$ & $0.640 \pm 0.110$ \\
+ Dieleman + Offset & $0.971 \pm 0.006$ & $0.628 \pm 0.117$ \\
 \end{tabular}
 \caption{misclassification rate for speaker classification with $95\%$ confidence internal.}
 \end{table}
