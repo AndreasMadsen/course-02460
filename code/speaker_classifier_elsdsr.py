@@ -13,7 +13,8 @@ import plot
 import early_stopping
 
 # Create data selector object
-selector = timit.FileSelector()
+#selector = timit.FileSelector()
+selector = elsdsr.FileSelector()
 selector = helpers.TargetType(selector, target='speaker')
 speakers = selector.labels
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
@@ -24,7 +25,7 @@ selector = helpers.Validation(selector, test_fraction=0.25, stratified=True)
 train_selector = helpers.Minibatch(selector.train)
 test_selector  = helpers.Minibatch(selector.test)
 
-cnn = network.Logistic(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
+cnn = network.Logistic(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True, learning_rate=0.1)
 # cnn = network.DielemanCNN(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
 # cnn.add_regularizer(network.regularizer.WeightDecay(1e-2))
 # cnn.add_regularizer(network.regularizer.ScaleInvariant(1e-1))

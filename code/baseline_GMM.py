@@ -45,35 +45,28 @@ for key, values in X_train.items():
 for key, values in X_test.items():
     X_test[key] = np.array(values)
 
-#
-#for X in [X_train, X_test]:
-#    for key, values in X.items():
-#        X[key] = np.array(values)
-#
-
 models = []
 for speaker in sorted(speakers):
     #clf = GMM(n_components=5) # TODO fix number of samples
     clf = GMM(n_components=3)
     clf.fit(X_train[speaker])
-    print(X_train[speaker].shape)
     models.append(clf)
 
 errors = 0
 observations = 0
 for input, target in selector.test:
-    for model in models:
-        prob = model.predict_proba([input.ravel()])
-        print('prob')
-        for x in prob[0]:
-            print(x)
-        print('')
+    #for model in models:
+    #    prob = model.predict_proba([input.ravel()])
+    #    print('prob')
+    #    for x in prob[0]:
+    #        print(x)
+    #    print('')
 
-    import sys
-    sys.exit()
+    #import sys
+    #sys.exit()
     probs = np.array([model.predict_proba([input.ravel()])[0] for model in models])
-    print(probs)
-    print(probs.shape)
+    #print(probs)
+    #print(probs.shape)
     y_hat = np.argmax(probs)
     errors += (y_hat != target)
     print('y_hat = %d == %d' % (y_hat, target))
