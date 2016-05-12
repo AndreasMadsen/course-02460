@@ -6,6 +6,7 @@ import theano
 import theano.tensor as T
 import matplotlib.pyplot as plt
 
+import timit
 import elsdsr
 import network
 import helpers
@@ -13,9 +14,8 @@ import early_stopping
 
 # Create data selector object
 nfolds = 20
-selector = elsdsr.FileSelector(usage=None, sex=None, speaker=None)
-selector = helpers.TargetType(selector, target='speaker')
-speakers = selector.labels
+selector = timit.FileSelector()
+selector = helpers.TargetType(selector, target='sex')
 selector = helpers.Spectrogram(selector, nperseg=256, noverlap=128, normalize_signal=True)
 selector = helpers.Splitter(selector, split_size=100, axis=2)
 selector = helpers.Normalize(selector)
@@ -81,4 +81,4 @@ reg_values = np.array(reg_values)
 X = np.vstack((reg_values, missrates))
 
 # Save values
-np.savetxt('./output/reg_opt_dieleman_weight_decay_speaker.csv', X)
+np.savetxt('./output/reg_opt_dieleman_weight_decay_sex.csv', X)
