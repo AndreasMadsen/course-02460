@@ -37,7 +37,7 @@ i.e. the layers uses rectified linear units (ReLU).
 
 The network is implemented in \texttt{python} using the library \texttt{lasagne}, which is implemented on top of \texttt{Theano} which allows for the use of highly optimized mathematical expression implementations, and also allows for transparent use of GPUs \cite{theano}.
 
-\subsection{Scale Invariant Regualization}
+\subsection{Scale Invariant Regularization}
 
 The cross entropy loss function for classification is given as:
 \begin{equation}
@@ -65,4 +65,4 @@ This is extremely convenient from an implementation perspective, as $P(C_{i, k} 
 \text{offset invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot \mathbf{1}\right)^2
 \end{align}
 
-The full loss function then $\mathcal{L} = \mathcal{L}_{entropy} + \lambda \mathcal{R}$, where $\lambda$ is a regularization parameter.
+The full loss function is then $\mathcal{L} = \mathcal{L}_{entropy} + \lambda \mathcal{R}$, where $\lambda$ is a regularization parameter.

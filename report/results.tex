@@ -35,7 +35,7 @@ model & TIMIT & ELSDSR \\ \hline
 \label{tab:results-speaker}
 \end{table}
 
-As seen the Dieleman model does not appear to be better than a simple logistic model or the GMM. Because the logistic model can be expressed as a simple neural network, we attempted to expand the logistic network with individual layers form the Dieleman network, however all configuration that uses convolutional layers performed similarly to the Dieleman network.
+As seen the Dieleman model does not appear to be better than a simple logistic model or the GMM. Because the logistic model can be expressed as a simple neural network, we attempted to expand the logistic network with individual layers from the Dieleman network, however all configurations that uses convolutional layers performed similarly to the Dieleman network.
 
 The regularization parameter for Weight Decay (L2) in the speaker classification was optimized. Similar procedure could have been done on the Scale Invariant and Offset Invariant regularizers, however the implementation of those where so slow that we considered it infeasible for the Dieleman network.
 
@@ -63,7 +63,7 @@ For each dataset generator the optimal regularization parameters where chosen. T
 	\label{fig:2d_significant}
 \end{figure}
 
-As seen from \cref{fig:2d_significant} is no significant benefit of using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers where checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
+As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers where checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
 
 \begin{figure*}[ht]
 	\centering
@@ -71,4 +71,3 @@ As seen from \cref{fig:2d_significant} is no significant benefit of using any of
 	\caption{Observations and contour plot of the class probability function for each classifier and dataset. The regularizer parameters was set to extreme values such the effect is visible. $0.1$ for \textit{NN + L2} and $10$ for \textit{NN + Scale/Offset Invariant}.}
 	\label{plt:generated-contour-extream}
 \end{figure*}
-
