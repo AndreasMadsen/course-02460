@@ -5,6 +5,8 @@
 
 Two datasets were used for speaker classification; ELSDSR and TIMIT. The ELSDSR dataset includes 23 people and was specifically created for automatic speaker recognition. The TIMIT dataset is an acoustic-phonetic speech corpus and was thus not directly created for automatic speaker recognition. As a result, the TIMIT dataset has people with few observations or very short soundclips. To accommodate for this the dataset was filtered to only include people with sufficiently many long observations. After this filtering only 81 people were left.
 
+Both datasets where preprocessed by normalizing the energy (L2 norm) of each signal to be one, and then a globally normalize the data to $\mu = 0$ and $\sigma = 1$.
+
 \subsection{The Dieleman network}
 
 The Dieleman network, expecting a spectrogram $x \in \mathbb{R}^{m \times n}$ as input, consists of 6 layers: 2 $\times$(\emph{Convolutional} layer + \emph{Max Pooling} layer), followed by 2 consecutive fully connected \emph{Dense} layers.
