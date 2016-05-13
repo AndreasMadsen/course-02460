@@ -1,6 +1,6 @@
 
 import csv
-
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -13,20 +13,25 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 import network
 
-def build_classifiers():
+with open('./output/classifier_2d_opt_param_values.json') as fd:
+    best_regualizer_parameters = json.load(fd)
+
+def build_classifiers(model):
+    regs = best_regualizer_parameters[model]
+
     nn_simple = network.ClassifierDNN(input_shape=(2, ), output_units=2)
     nn_simple.compile()
 
     nn_l2 = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_l2.add_regularizer(network.regularizer.WeightDecay(1e-1))
+    nn_l2.add_regularizer(network.regularizer.WeightDecay(regs['NN + L2']))
     nn_l2.compile()
 
     nn_si = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e+1, use_Rop=True))
+    nn_si.add_regularizer(network.regularizer.ScaleInvariant(regs['NN + Scale Invariant'], use_Rop=True))
     nn_si.compile()
 
     nn_oi = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_oi.add_regularizer(network.regularizer.OffsetInvariant(1e+1, use_Rop=True))
+    nn_oi.add_regularizer(network.regularizer.OffsetInvariant(regs['NN + Offset Invariant'], use_Rop=True))
     nn_oi.compile()
 
     names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant", "NN + Offset Invariant"]
@@ -61,7 +66,7 @@ def build_datasets(n_samples=100):
 
 samples = 100
 
-with open('./output/classifer-significance.csv', 'w') as fd:
+with open('./output/classifier-significance.csv', 'w') as fd:
     writer = csv.DictWriter(fd,
                             ['trial', 'dataset', 'model', 'missclassification'],
                             dialect='unix')
@@ -76,7 +81,7 @@ with open('./output/classifer-significance.csv', 'w') as fd:
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4)
 
             # iterate over classifiers
-            for clf_name, clf in zip(*build_classifiers()):
+            for clf_name, clf in zip(*build_classifiers(ds_name)):
                 clf.fit(X_train, y_train)
                 score = clf.score(X_test, y_test)
 
