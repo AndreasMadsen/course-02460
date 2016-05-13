@@ -37,7 +37,7 @@ for ds_idx, ds_name in enumerate(clf_file.dataset_name):
         for reg_i, reg_missrate in enumerate(missrate.T):
             (missrate_means[reg_i], missrate_cis[reg_i]) = mean_confidence(reg_missrate)
 
-        opt_vals[ds_name][clf_name] = np.max(missrate_means)
+        opt_vals[ds_name][clf_name] = reg_values[np.argmin(missrate_means)]
 
         plt.subplot(len(clf_file.dataset_name), len(clf_file.classifier_name), subplot_index)
         plt.errorbar(reg_values, missrate_means, yerr=missrate_cis, color="SteelBlue")
