@@ -22,11 +22,11 @@ def build_classifiers():
     nn_l2.compile()
 
     nn_si = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e-1, use_Rop=True))
+    nn_si.add_regularizer(network.regularizer.ScaleInvariant(1e+1, use_Rop=True))
     nn_si.compile()
 
     nn_oi = network.ClassifierDNN(input_shape=(2, ), output_units=2)
-    nn_oi.add_regularizer(network.regularizer.OffsetInvariant(1e-1, use_Rop=True))
+    nn_oi.add_regularizer(network.regularizer.OffsetInvariant(1e+1, use_Rop=True))
     nn_oi.compile()
 
     names = ["Random Forest", "Linear Discriminant Analysis", "NN", "NN + L2", "NN + Scale Invariant", "NN + Offset Invariant"]
@@ -59,11 +59,11 @@ def build_datasets(n_samples=100):
                 xor_scale_invariant(n_samples=n_samples)]
     return (names, datasets)
 
-samples = 25
+samples = 100
 
-with open('./output/classifer-significance-25-samples.csv', 'w') as fd:
+with open('./output/classifer-significance.csv', 'w') as fd:
     writer = csv.DictWriter(fd,
-                            ['trial', 'dataset', 'model', 'score'],
+                            ['trial', 'dataset', 'model', 'missclassification'],
                             dialect='unix')
     writer.writeheader()
 
