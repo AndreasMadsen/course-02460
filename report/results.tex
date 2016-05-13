@@ -46,7 +46,7 @@ The regularization parameter for Weight Decay (L2) in the speaker classification
   \label{fig:reg_opt}
 \end{figure}
 
-The best regularizer parameter is $\lambda = 5 \cdot 10^{-3}$, to ensure it is statistically significantly different from choosing $\lambda = 0$, an two-sample t-test was used. This yields $p = 0.00070$, i.e. it is significant with $95\%$ confidence.
+The best regularizer parameter is $\lambda = 5 \cdot 10^{-3}$, to ensure it is statistically significantly different from choosing $\lambda = 0$ a two-sample t-test was used. This yields $p = 0.00070$, i.e. it is significant with $95\%$ confidence.
 
 \subsection{Analysis on generated datasets}
 
@@ -56,14 +56,14 @@ Because the Scale Invariant and Offset Invariant regularizers did not improve th
 
 For each dataset generator the optimal regularization parameters where chosen. This was done by sampling 10 datasets for each data generator, model and regularization choice. The results can be seen in \cref{appendix:regualization-optimization}. The best parameters was then used to compare the models, see \cref{fig:2d_significant}.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.4\textwidth]{plots/2d_significant}
+	\includegraphics[width=0.45\textwidth]{plots/2d_significant}
 	\caption{Boxplot of misclassification rate over 100 datasets.}
 	\label{fig:2d_significant}
 \end{figure}
 
-As seen there is no significant benefit of using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers where checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
+As seen from \cref{fig:2d_significant} is no significant benefit of using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers where checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
 
 \begin{figure*}[ht]
 	\centering

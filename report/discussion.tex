@@ -1,13 +1,13 @@
 %!TEX root = main.tex
 \section{Discussion}
 
-\todo[inline]{Dieleman is not performing very well. Why?}
+In the sex classification case (\cref{tab:results-speaker}) it's seen that for both TIMIT and ELSDSR the network models perform better than the GMM on MFCC. This is not surprising the for the Dieleman models, as they should be able to learn features there are similar or better than the MFCC features. However the logistic regression model also performs better, this perhaps expected as sex classification don't require a lot of information, thus mean frequencies may suffice. Finally the logistic regression learns using all observations simultaneously, while GMM learns from just one sex at a time which could result in a worse performance.
 
-\cref{tab:results-speaker,tab:results-sex}
+In the speaker classification case (\cref{tab:results-speaker}) the GMM also performs worse than logistic regression, though in the ELSDSR case it is not significant. This is more surprising as speaker classification should be much harder and thus require more information, but this does not appear to be the case. Finally the Dieleman model performs significantly worse than logistic regression, this is perhaps the most surprising result as it should at the very least be able to learn something similarly to logistic regression. This could suggest that there may be a vanishing moment problem, however the network is able to overfit and the output distribution of the individual layers don't support this.
 
-\todo[inline]{Weight decay doesn't improve performance. Why? (Dielemen reported the same thing)}
-\todo[inline]{Scale invarians doesn't improve performance. Why?}
-\todo[inline]{Offset invarians doesn't improve performance. Why?}
+Finally we can report that adding Weight Decay do improve the Dieleman model slightly, however it is not by much. In the original Dieleman paper \cite{dieleman} it was found that adding Weight Decay didn't not improve the performance, and we do suspect it may also be the case for our problem. In our weight decay optimization there are 27 choices ($\lambda \in [10^{-10}, 5 \cdot 10^{-2}]$), that we think could have the same performance as $\lambda = 0$. Thus with a $95\%$ confidence interval we can expect $1.35$ of those tests to be a type 1 error (false rejection). We suspect that $\lambda = 5 \cdot 10^{-3}$ may be a false rejection.
+
+\subsection{Analysis on generated datasets}
 
 \todo[inline]{Comment on contour plots from synthetic data.}
 
