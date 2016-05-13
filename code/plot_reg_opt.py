@@ -13,10 +13,10 @@ missrates =  X[1:,:]
 missrate_means = missrates.mean(axis=0)
 missrate_sds = missrates.std(axis=0)
 
-plt.figure()
+plt.figure(figsize=(6, 3))
 plt.errorbar(reg_values, missrate_means, yerr=missrate_sds * 2.776 / np.sqrt(5), color="IndianRed")
 plt.ylabel('Misclassification rate')
 plt.xlabel('Weight decay parameter')
 plt.xscale('log')
-plt.savefig('./output/reg_opt_dieleman_speaker_elsdsr.eps', bbox_inches='tight')
+plt.savefig('../reg_opt_dieleman_speaker_elsdsr.pdf', bbox_inches='tight')
 plt.show()
