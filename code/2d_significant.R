@@ -3,7 +3,7 @@ cat('\f');
 
 library(ggplot2)
 
-dat = read.csv('./output/classifer-significance-short.csv')
+dat = read.csv('./output/classifier-significance-short.csv')
 
 p = ggplot(dat, aes(y=missclassification, x=model, fill=dataset))
 p = p + geom_boxplot()
