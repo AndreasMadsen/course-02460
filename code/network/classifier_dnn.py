@@ -37,6 +37,13 @@ class ClassifierDNN(NetworkAbstraction):
 
         network = lasagne.layers.DenseLayer(
             incoming=network,
+            num_units=20,
+            nonlinearity=lasagne.nonlinearities.rectify,
+            W=lasagne.init.GlorotUniform('relu')
+        )
+
+        network = lasagne.layers.DenseLayer(
+            incoming=network,
             num_units=self.output_units,
             nonlinearity=lasagne.nonlinearities.softmax
         )

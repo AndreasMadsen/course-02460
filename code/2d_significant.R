@@ -1,9 +1,9 @@
+#setwd("C:/Users/frederik/Documents/dtu/advanced/course-02460/code/output")
 rm(list=ls());
 cat('\f');
 
 library(ggplot2)
-
-dat = read.csv('./output/classifier-significance-short.csv')
+dat = read.csv('./classifer-significance-25-trials.csv')
 
 p = ggplot(dat, aes(y=missclassification, x=model, fill=dataset))
 p = p + geom_boxplot()
