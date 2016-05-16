@@ -1,14 +1,14 @@
 %!TEX root = main.tex
 \section{Results}
 
-The Dieleman model was used for both sex and speaker classification. The results are presented below.
+The Dieleman model was used for both sex and speaker classification. In addition the baseline of choosing the largest class, a logistic regression model applied to the time-mean and a GMM is included for comparison. The results for sex and speaker classification is included below:
 
 \begin{table}[H]
 \centering
 \begin{tabular}{r|c|c}
 model & TIMIT & ELSDSR \\ \hline
                     Baseline & $0.354$ & $0.465$ \\
-                    Logistic & $0.094 \pm 0.012$ & $0.030 \pm 0.007$ \\
+                    Logistic on mean & $0.094 \pm 0.012$ & $0.030 \pm 0.007$ \\
                  GMM on MFCC & $0.192 \pm 0.024$ & $0.140 \pm 0.019$ \\
                     Dieleman & $0.093 \pm 0.012$ & $0.026 \pm 0.006$ \\
      Dieleman + L2 & $0.114 \pm 0.013$ & $0.036 \pm 0.016$ \\
@@ -24,7 +24,7 @@ model & TIMIT & ELSDSR \\ \hline
 \begin{tabular}{r|c|c}
 model & TIMIT & ELSDSR \\ \hline
                     Baseline & $0.988$ & $0.957$ \\
-                    Logistic & $0.796 \pm 0.046$ & $0.338 \pm 0.043$ \\
+                    Logistic on mean & $0.796 \pm 0.046$ & $0.338 \pm 0.043$ \\
                  GMM on MFCC & $0.836 \pm 0.020$ & $0.391 \pm 0.023$ \\
                     Dieleman & $0.965 \pm 0.021$ & $0.570 \pm 0.029$ \\
      Dieleman + L2 & $0.944 \pm 0.020$ & $0.552 \pm 0.045$ \\
@@ -71,3 +71,16 @@ As seen from \cref{fig:2d_significant} there is no significant benefit from usin
 	\caption{Observations and contour plot of the class probability function for each classifier and dataset. The regularizer parameters was set to extreme values such the effect is visible. $0.1$ for \textit{NN + L2} and $10$ for \textit{NN + Scale/Offset Invariant}.}
 	\label{plt:generated-contour-extream}
 \end{figure*}
+
+In addition the invariance regularizers seemed to have a no impact (or negative impact) on sex and speaker classification. Thus 7 synthetic datagenerators were constructed to test if invariance had potential in other areas:
+\begin{itemize}
+\item{Moons: A generator creating two entangled half-moons each consisting of a class.}
+\item{Circles: An inner circle with an outer ring of different classes.}
+\item{Linear: Two linearly seperable classes.}
+\item{XOR: The binary xor in 2d.}
+\item{Diagonal: One central class along the diagonal sandwiched between a second class.}
+\item{Rays: Rays protruding from the origin.}
+\item{Dist: Classes distributed uniformly around the origin based on distance.}
+\end{itemize}
+
+Following an optimizing of the regularization parameters 25 datasets were created for each generator. Each dataset was subjugated to 7 models of which 5 were neural networks identical except for their regularization (see figure \ref{fig:example-models}). None of the invariance methods showed statistically significant improvements for any of the datasets (see figure \ref{fig:boxplot}).
