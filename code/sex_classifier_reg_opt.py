@@ -31,9 +31,7 @@ for k, fold in enumerate(selector.folds):
     test_selector  = helpers.Minibatch(fold.test)
 
     for i, reg_val in enumerate(reg_values):
-        cnn = network.DielemanCNN(input_shape=(1, 129, 100), output_units=len(speakers),
-                                  verbose=True, learning_rate=0.001, dropout=False)
-        #cnn = network.Logistic(input_shape=(1, 129, 100), output_units=len(speakers), verbose=True)
+        cnn = network.Logistic(input_shape=(1, 129, 100), output_units=2, verbose=True)
         cnn.add_regularizer(network.regularizer.WeightDecay(reg_val))
         cnn.compile()
 
