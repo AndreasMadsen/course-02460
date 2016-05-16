@@ -1,0 +1,22 @@
+{
+  "circles": {
+    "NN + Scale Invariant": 2e-07,
+    "NN + L2": 5e-07,
+    "NN + Offset Invariant": 1e-10
+  },
+  "xor": {
+    "NN + Scale Invariant": 5e-08,
+    "NN + L2": 2e-05,
+    "NN + Offset Invariant": 1.0
+  },
+  "moons": {
+    "NN + Scale Invariant": 0.0002,
+    "NN + L2": 1e-06,
+    "NN + Offset Invariant": 0.2
+  },
+  "linear": {
+    "NN + Scale Invariant": 2e-09,
+    "NN + L2": 2e-05,
+    "NN + Offset Invariant": 5e-09
+  }
+}

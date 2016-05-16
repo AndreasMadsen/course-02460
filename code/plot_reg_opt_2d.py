@@ -26,7 +26,8 @@ for ds_idx, ds_name in enumerate(clf_file.dataset_name):
 
         # Load file
         filename = 'cv-scores-ds-%d-clf-%d' % (ds_idx, clf_idx)
-        X = np.loadtxt('./output/cv_results/%s.csv' % (filename))
+        #X = np.loadtxt('./output/cv_results/%s.csv' % (filename))
+        X = np.loadtxt('./output/cv_results_50_folds/%s.csv' % (filename))
 
         # Extract scores
         reg_values = X[0, :]
@@ -57,8 +58,8 @@ for ds_idx, ds_name in enumerate(clf_file.dataset_name):
         if ds_idx == 0:
             plt.title(clf_name, fontsize=16)
 
-with open('./output/classifier_2d_opt_param_values.json', 'w') as f:
+with open('./output/classifier_2d_opt_param_values_50_folds.json', 'w') as f:
     json.dump(opt_vals, f, indent=2)
 
 plt.tight_layout()
-plt.savefig('../syntetic_reg_opt.pdf', bbox_inches='tight')
+plt.savefig('../syntetic_reg_opt_50_folds.pdf', bbox_inches='tight')
