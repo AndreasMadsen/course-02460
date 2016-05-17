@@ -22,7 +22,7 @@ selector = helpers.Normalize(selector)
 selector = helpers.CrossValidation(selector, folds=nfolds, stratified=True)
 
 #reg_values = [1] + [x* 10 ** (-y) for y in range(1, 11) for x in [5, 2, 1]] + [0]
-reg_values = [1] + [x* 10 ** (-y) for y in range(1, 11) for x in [1]] + [0]
+reg_values = [1] + [x* 10 ** (-y) for y in range(1, 5) for x in range(10,0,-1)] + [0]
 #reg_values = [0.1, 0.5]
 
 missrates = np.zeros((nfolds, len(reg_values)))

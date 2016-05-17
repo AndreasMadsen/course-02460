@@ -45,7 +45,7 @@ The regularization parameter for Weight Decay (L2) in the speaker classification
   \label{fig:reg_opt}
 \end{figure}
 
-The best regularizer parameter is $\lambda = 5 \cdot 10^{-3}$. To ensure it is statistically significantly different from choosing $\lambda = 0$ a two-sample t-test was used. This yields $p = 0.00070$, i.e. we can reject the null hypothesis $\lambda=0$ at a $5\%$ significance level.
+The best regularizer parameter is $\lambda = 5 \cdot 10^{-3}$. To ensure it is statistically significantly different from choosing $\lambda = 0$ a two-sample t-test was used. This yields $p = 0.00070$, i.e. we can reject the null hypothesis $\lambda=0$ at a $5\%$ significance level. A 20-fold CV was performed on a finer grid around $\lambda = 5 \cdot 10^{-3}$ in \cref{appendix:optimization-weight-decay}.
 
 \subsection{Synthetic datasets}
 
