@@ -50,9 +50,7 @@ The best regularizer parameter is $\lambda = 5 \cdot 10^{-3}$, to ensure it is s
 
 \subsection{Analysis on generated datasets}
 
-Because the Scale Invariant and Offset Invariant regularizers did not improve the results on sex or speaker classification, the regularizers was analyzed using generated dimensional datasets.
-
-\todo[inline]{elaborate on the generated datasets}
+Because the Scale Invariant and Offset Invariant regularizers did not improve the results on sex or speaker classification, the regularizers were analyzed using generated dimensional datasets.
 
 For each dataset generator the optimal regularization parameters where chosen. This was done by sampling 10 datasets for each data generator, model and regularization choice. The results can be seen in \cref{appendix:regualization-optimization}. The best parameters was then used to compare the models, see \cref{fig:2d_significant}.
 
@@ -63,7 +61,7 @@ For each dataset generator the optimal regularization parameters where chosen. T
 	\label{fig:2d_significant}
 \end{figure}
 
-As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers where checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
+As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However misclassification only tests the decision boundary, thus it made sense to inspect the probability function contours, also here no difference could be observed (see \cref{appendix:generated-contour-optimized}). Finally the regularizers were checked for extreme regularization parameter choices \cref{plt:generated-contour-extream}.
 
 \begin{figure*}[ht]
 	\centering
@@ -83,4 +81,4 @@ In addition the invariance regularizers seemed to have a no impact (or negative 
 \item{Dist: Classes distributed uniformly around the origin based on distance.}
 \end{itemize}
 
-Following an optimizing of the regularization parameters 25 datasets were created for each generator. Each dataset was subjugated to 7 models of which 5 were neural networks identical except for their regularization (see figure \ref{fig:example-models}). None of the invariance methods showed statistically significant improvements for any of the datasets (see figure \ref{fig:boxplot}).
+Following an optimization of the regularization parameters 25 datasets were created for each generator. Each dataset was subjugated to 7 models of which 5 were neural networks identical except for their regularization (see figure \ref{fig:example-models}). None of the invariance methods showed statistically significant improvements for any of the datasets (see figure \ref{fig:boxplot}).
