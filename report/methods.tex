@@ -44,7 +44,7 @@ The cross entropy loss function for classification is given as:
 \mathcal{L}_{entropy} = - \frac{1}{N} \sum_{i=1}^N \sum_{k=1}^K t_{i,k} \ln(P(C_{i,k} | x_i, w))
 \end{equation}
 
-The approach used in \cite{scale-invariante}, is to add a transformation invariant regularizer to this loss function. The transformation is given as $s(x, \alpha)$ where $x$ is the observation and $\alpha$ is the transformation parameter. The only restriction on $s$ is that $s(x, \alpha) |_{\alpha=0} =x$. As such two examples of $s$ are:
+The approach used in \cite{scale-invariante}, is to add a transformation invariant regularizer to this loss function. The transformation is given as $s(x, \alpha)$ where $x$ is the observation and $\alpha$ is the transformation parameter. The only restriction on $s$ is that $s(x, 0) = x$. As such two examples of $s$ are:
 \begin{align}
 \text{scale transformation:}&\quad s(x, \alpha) = (1+\alpha) x\\
 \text{offset transformation:}&\quad s(x, \alpha) = x + \alpha
@@ -65,4 +65,4 @@ This is extremely convenient from an implementation perspective, as $P(C_{i, k} 
 \text{offset invariant: }& \mathcal{R} = \frac{1}{N} \sum_{i=1}^N \left(\nabla_x P(C_{i, k} | x_i, w) \bigcdot \mathbf{1}\right)^2
 \end{align}
 
-The full loss function is then $\mathcal{L} = \mathcal{L}_{entropy} + \lambda \mathcal{R}$, where $\lambda$ is a regularization parameter.
+The full loss function is then $\mathcal{L} = \mathcal{L}_{entropy} + \lambda \mathcal{R}$, where $\lambda$ is the regularization parameter.

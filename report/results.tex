@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 \section{Results}
 
-The Dieleman model was used for both sex and speaker classification. In addition the baseline of choosing the largest class, a logistic regression model applied to the time-mean and a GMM is included for comparison. The results for sex and speaker classification is included below:
+The Dieleman model was used for both sex and speaker classification. In addition the baseline of choosing the largest class, a logistic regression model applied to the mean frequencies and a GMM is included for comparison. The results for sex and speaker classification is included below:
 \begin{table}[H]
 \centering
 \begin{tabular}{r|c|c}
@@ -34,7 +34,7 @@ model & TIMIT & ELSDSR \\ \hline
 \label{tab:results-speaker}
 \end{table}
 
-As seen the Dieleman model does not appear to be better than a simple logistic model or the GMM. Because the logistic model can be expressed as a simple neural network, it was attempted to increase the depth of the logistic network one layer at a time to form the Dieleman network. However, all configurations that used convolutional layers had performance similar to the Dieleman network.
+As seen the Dieleman model does not appear to be better than a simple logistic model or the GMM. Because the logistic model can be expressed as a simple neural network, it was attempted to increase the depth of the logistic network one layer at a time to form the Dieleman network. However, all variations that used convolutional layers had performance similar to the Dieleman network.
 
 The regularization parameter for Weight Decay (L2) in the speaker classification was optimized. Similar procedure could have been done on the Scale Invariant and Offset Invariant regularizers, however the implementation of those where so slow that we considered it infeasible for the Dieleman network.
 
@@ -66,7 +66,7 @@ For each data generator the optimal regularization parameters where chosen. This
 	\label{fig:2d_significant}
 \end{figure}
 
-As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However, misclassification is only affected by the decision boundary and thus there might differences in the estimated probability function. But when inspecting the contours (see \cref{appendix:generated-contour-optimized}) no such differences could be observed. Finally, the regularizers parameters were set to extreme values to check that they do indeed have influence on contours (see \cref{plt:generated-contour-extream}).
+As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However, misclassification is only affected by the decision boundary and thus there might differences in the estimated probability function. But when inspecting the contours (see \cref{appendix:generated-contour-optimized}) no such differences could be observed. Finally, the regularizers parameters were set to extreme values to check if they have influence on the contours (see \cref{plt:generated-contour-extream}).
 
 \begin{figure*}[ht]
 	\centering
