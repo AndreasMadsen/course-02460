@@ -1,7 +1,13 @@
 %!TEX root = main.tex
 \begin{abstract}
-Questions, methods, major findings and quantitative results, interpretation
-and conclusion. No abbreviation and references!
+%Questions, methods, major findings and quantitative results, interpretation
+%and conclusion. No abbreviation and references!
+
+%In recent years the use of deep learning for automatic feature learning has been widely used in areas like audio, text and images, and with much success.
+
+This paper investigates the use of convolutional neural networks for sex- and speech classification.
+The network structure is chosen based on previous research, and is tested on two real-life datasets, where it is found to perform well on sex classification, but for speech classification the network is outperformed by simpler models based on human-engineered features. The adding of weight decay regularization was not found to have any performance gain, hence the network is attempted regularized by ensuring scale- and offset invariance through explicit algebraic invariance terms, which was found to cause no significant gain in performance.
+Finally the network is tested on 4 synthetic datasets, in order to analyze the impact of the different regularizations.
 
 % Finally since it was found that the Dieleman network didn't experience any performance gain from using standard regularization techniques \cite{dieleman}, a special regularizer, ensuring scale invariance, is created. This regularizer is inspired from \cite{scale-invariante} with the idea being that models should be invariant to small pertubations of input.
 \end{abstract}
