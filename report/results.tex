@@ -57,7 +57,7 @@ The invariance regularizers seemed to have a no impact (or negative impact) on s
 \item{XOR: The binary xor in 2d.}
 \end{itemize}
 
-For each data generator the optimal regularization parameters where chosen. This was done by sampling 10 datasets for per generator, model and regularization choice. The results can be seen in \cref{appendix:regualization-optimization}. The best parameters were then used to compare the models, see \cref{fig:2d_significant}.
+For each data generator the optimal regularization parameters where chosen. This was done by sampling 10 datasets per generator, model and regularization choice. The results can be seen in \cref{appendix:regualization-optimization}. The best parameters were then used to compare the models, see \cref{fig:2d_significant}.
 
 \begin{figure}[h]
 	\centering
@@ -66,7 +66,7 @@ For each data generator the optimal regularization parameters where chosen. This
 	\label{fig:2d_significant}
 \end{figure}
 
-As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However, misclassification is only affected by the decision boundary and thus there might differences in the estimated probability function. But when inspecting the contours (see \cref{appendix:generated-contour-optimized}) no such differences could be observed. Finally, the regularizers parameters were set to extreme values to check if they have influence on the contours (see \cref{plt:generated-contour-extream}).
+As seen from \cref{fig:2d_significant} there is no significant benefit from using any of the regularizers. However, misclassification is only affected by the decision boundary and thus there might differences in the estimated probability function. But when inspecting the contours (see \cref{appendix:generated-contour-optimized}) no such differences could be observed. Finally, the regularizers parameters were set to extreme values to check if the regularizers had any influence on the contours (see \cref{plt:generated-contour-extream}).
 
 \begin{figure*}[ht]
 	\centering
