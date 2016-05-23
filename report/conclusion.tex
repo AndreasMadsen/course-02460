@@ -1,6 +1,6 @@
 %!TEX root = main.tex
 \section{Conclusion}
 
-In this report it was shown that the end-to-end learning offered by a Deep convolutional Neural Network performs sex-classification on sound better than using hand-crafted MFCC features and a GMM. However, for speaker-classification the opposite was true. This appeared to be caused by the DNN somehow overfitting \todo{I'm not sure this is true and we haven't discussed it elsewhere.} because a simple logistic regression was far superior to both of the aforementioned methods. Different types of regularization were added but none improved the results.
+In this report it was shown that the end-to-end learning offered by a Deep convolutional Neural Network performs sex-classification on sound better than using hand-crafted MFCC features and a GMM. However, for speaker-classification logistic regression performed best, this may be because of too little data. Different types of regularization were added but none improved the results.
 
 Among the regularization methods tried were a new implementation of ``invariance'' regularizer. These where implemented in Theano and in addition to the aforementioned problems it was also evaluated on synthetic datasets. No evidence was found that this form of regularization improved performance on any of the datasets.
