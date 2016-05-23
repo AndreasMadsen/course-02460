@@ -5,7 +5,7 @@
 
 Two datasets were used for speaker classification; ELSDSR and TIMIT. The ELSDSR dataset includes 23 people and was specifically created for automatic speaker recognition. The TIMIT dataset is an acoustic-phonetic speech corpus and was thus not directly created for automatic speaker recognition. As a result, the TIMIT dataset has people with few observations or very short soundclips. To accommodate for this the dataset was filtered to only include people with sufficiently many long observations. After this filtering only 81 people were left.
 
-Both datasets where preprocessed by normalizing the energy (L2 norm) of each signal to be one, and then a globally normalize the data to $\mu = 0$ and $\sigma = 1$.
+Both datasets were preprocessed by normalizing the energy (L2 norm) of each signal to be one, and then a globally normalize the data to $\mu = 0$ and $\sigma = 1$.
 
 \subsection{The Dieleman network}
 
@@ -26,7 +26,7 @@ This reduces the dimensionality of the output by $4$, thus giving a layer output
 
 For the 3rd and 4th network layer the same procedure is applied using filters of size $1 \times 8$, and again a max pooling of size $1 \times 4$.
 
-Finally the output of layer 4 is feed into a regular fully-connected dense layer of $100$ nodes, and then a softmax function is used as the final layer.
+Finally the output of layer 4 is fed into a regular fully-connected dense layer of $100$ nodes, and then a softmax function is used as the final layer.
 
 On the \emph{Convolutional} and \emph{Dense} layers the rectifier function (\cref{eq:rectifier}) is used as activation function
 \begin{equation}
